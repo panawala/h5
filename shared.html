@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>创建一个固定价格的酒店</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://m-test.xmonster.cn/static/css/m-common.css?v=9f12c84032cf980d2def38b915773e50">
+    <link rel="stylesheet" type="text/css" href="https://m-test.xmonster.cn/static/css/download-tip.css?v=9be80be6dc3f38a190d6a528cfed3172">
+    <style type="text/css">
+        .clearfix { *zoom: 1;}
+        .clearfix:after{ content: ""; display: block; height: 0; visibility:hidden; clear: both;}
+        .rich-media-title {
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-weight: 400;
+            font-size: 24px;
+        }
+        .rich-media-meta{
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            font-size: 15px;
+            color: #8C8C8C;
+        }
+        .rich-media-meta-list{
+            margin-bottom: 15px;
+        }
+        .time-icon{
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .address-icon{
+            width: 14px;
+            height: 22px;
+            line-height: 22px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .first_friend_item{
+            margin-top: 25px;
+        }
+        .friend_item{
+            height: 60px;
+            width: 100%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            color: #9B9B9B;
+        }
+        .friend_avatar{
+            float: left;
+            position: relative;
+            margin-top: 5px;
+            width: 49px;
+            height: 45px;
+        }
+        .crown{
+            position: absolute;
+            top: -13px;
+            left: 28px;
+            width: 22px;
+            height: 21px;
+        }
+        .first_friend_desc{
+            margin-left: 40px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .friend_desc{
+            margin-left: 40px;
+            height: 100%;
+            border-top: 1px #E5E5E5 solid
+        overflow: hidden;
+        }
+        .upper{
+            margin-top: 5px;
+            height: 17px;
+        }
+        .lower{
+            margin-top: 10px;
+            line-height: 14px;
+            height: 14px;
+            color: #9B9B9B;
+            font-size: smaller;
+        }
+        .avatar{
+            width: 45px;
+            height: 45px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+        }
+        .name{
+            font-weight: bold;
+            color: #52484B;
+            line-height: 17px;
+            height: 17px;
+            font-size: small;
+        }
+        .date{
+            float: right;
+            font-size: 12px;
+            padding-top: 3px;
+        }
+        a:link {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        a:visited {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        a:hover {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        a:active {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        .go_together{
+            width: 100%;
+            height: 43px;
+            background-color: #ED3260;
+            display: block;
+            text-align: center;
+            text-decoration: blink;
+            line-height: 43px;
+            margin-top: 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .intent_space{
+            height: 120px;
+            width: 100%;
+        }
+    </style>
+    <style type="text/css">
+        @keyframes myfirst
+        {
+            from {height: 0;}
+            to {height: 80px;}
+        }
+        @-moz-keyframes myfirst /* Firefox */
+        {
+            from {height: 0;}
+            to {height: 80px;}
+        }
+        @-webkit-keyframes myfirst /* Safari 和 Chrome */
+        {
+            from {height: 0;}
+            to {height: 80px;}
+        }
+        @-o-keyframes myfirst /* Opera */
+        {
+            from {height: 0;}
+            to {height: 80px;}
+        }
+        .download-tip-animation{
+            animation: myfirst 0.3s;
+            -moz-animation: myfirst 0.3s;
+            -webkit-animation: myfirst 0.3s;
+            -o-animation: myfirst 0.3s;
+        }
+        .download-tip-position{
+            position: fixed;
+            bottom: 0;
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        .dot-line-div{
+            background-color: #fff;
+            text-align: center;
+            border-bottom: 1px #B5B5B5 dotted;
+            height: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .dot-line-span{
+            background-color: #fff;
+            width: 100px;
+            text-align: center;
+            position: absolute;
+            top: 8px;
+            display: inline-block;
+            margin: 0 auto;
+            padding: 0 5px;
+            left: 50%;
+            margin-left: -50px;
+            font-size: initial;
+            color: #9A9A9A;
+        }
+    </style>
+</head>
+<body>
+<div id="download-tip" style="display: none;" class="download-tip-position download-tip clearfix">
+    <div class="logo-area">
+<span class="table-center">
+<img class="logo" src="static/images/gologo.png">
+</span>
+    </div>
+    <div class="download-content">
+        <div class="up">
+            <span class="up-go">走起</span>
+            <span class="up-size">5.5MB</span>
+        </div>
+        <span class="play">做朋友圈最会玩的人</span>
+    </div>
+    <div class="download-area">
+        <div class="table-center">
+            <a class="download-btn" href="https://itunes.apple.com/cn/app/zou-qi-zuo-peng-you-quan-li/id980145972?ls=1&mt=8">试试</a>
+        </div>
+    </div>
+</div>
+<h2 class="rich-media-title">创建一个固定价格的酒店</h2>
+<div>
+    <img class="time-icon" src="static/images/time-icon.png" />
+    <em class="rich-media-meta">03月06日~04月22日 10:00-12:00</em>
+</div>
+<div class="rich-media-meta-list">
+    <img class="address-icon" src="static/images/address-icon.png" />
+    <em class="rich-media-meta">Mcake网店地址</em>
+</div>
+<p><img src="http://7tszlo.com1.z0.glb.clouddn.com/1a2c98ce-dc08-11e4-b8cc-00163e023969.png" alt="创建一个固定价格的酒店"></p>
+<p>这里写摘要</p><p>这里写你的初始化内容</p>
+<a href="" id="go_together" class="go_together">我也想去</a>
+<div class="dot-line-div">
+    <span class="dot-line-span">看看谁想去</span>
+</div>
+
+<div id="first_friend_item" class="friend_item first_friend_item clearfix">
+    <div class="friend_avatar">
+        <img src="http://wx.qlogo.cn/mmopen/Q3auHgzwzM6An1iavTT0x5XbppbUj7UrJz7A3gqaia8fDY3bP5JKmRa4UoM3xsvtRQfBVkArRBRufMmozRZ0xZ6g/0" class="avatar">
+        <img class="crown" src=static/images/crown.png?v=c232d8ad06ea7219719aec01444d861a">
+    </div>
+    <div class="first_friend_desc">
+        <div class="upper">
+            <span class="name">William</span>
+            <span class="date">楼主</span>
+        </div>
+        <div class="lower">约吗?</div>
+    </div>
+</div>
+
+
+<div class="friend_item clearfix">
+    <div class="friend_avatar">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/690c8698-db81-11e4-900b-00163e023969.jpg" class="avatar">
+    </div>
+    <div class="friend_desc">
+        <div class="upper">
+            <span class="name">莫大鹏</span>
+            <span class="date">两天前</span>
+        </div>
+        <div class="lower">走起！</div>
+    </div>
+</div>
+
+<div class="intent_space"></div>
+<script type="application/javascript">
+    var state = 'init';
+    if(state == 'init'){
+        var appid = 'wx30e57c1ed5136c67';
+        var redirect_uri = location.origin + location.pathname;
+        var response_type = 'code';
+        var scope = 'snsapi_userinfo';
+        var state = 'from_mp';
+        var go_together_url = 'https://open.weixin.qq.com/connect/oauth2/authorize?';
+        go_together_url += 'appid=' + appid;
+        go_together_url += '&redirect_uri=' + escape(redirect_uri);
+        go_together_url += '&response_type=' + response_type;
+        go_together_url += '&scope=' + scope;
+        go_together_url += '&state=' + state;
+        go_together_url += '#wechat_redirect';
+        document.getElementById('go_together').href = go_together_url;
+    }else{
+        var go_together_url = '';
+        document.getElementById('go_together').href = "/feeds";
+        document.getElementById('go_together').innerText = "我来发起";
+        location.hash = 'go_together';
+    }
+    setTimeout(function(){
+        document.getElementById('download-tip').style.display = 'block';
+        document.getElementById('download-tip').className = "download-tip-animation download-tip-position download-tip clearfix";
+    }, 3000);
+    // window.onscroll = function(){
+    // var first_item_pos = document.getElementById('first_friend_item').getBoundingClientRect().top;
+    // if(first_item_pos <= document.documentElement.clientHeight - 60){
+    // document.getElementById('download-tip').style.display = 'block';
+    // document.getElementById('download-tip').className = "download-tip-animation download-tip-position download-tip clearfix";
+    // }
+    // };
+</script>
+</body>
+</html>

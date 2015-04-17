@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>用户验证</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding:0;
+            -webkit-tap-highlight-color:rgba(0,0,0,0);
+            -webkit-text-size-adjust:none;
+        }
+        body{
+            background-color: #f5f5f5;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="mask" style="height:100%;width:100%;z-index:888;background:#EEE;box-sizing:border-box;border-radius:4px;position:absolute;top:0;left:0;opacity:0;"></div>
+    <div id="msg" style="padding:20px;z-index:999;width:180px;background:#888;box-sizing:border-box;border-radius:4px;margin:0 auto;position: absolute;top:150px;left:50%;margin-left:-90px;opacity:0.8;">
+        <span style="display:block;text-align:center;box-sizing:border-box;word-break:break-all;"></span>
+    </div>
+
+    <div class="container">
+        <div class="info">
+            <span class="info-1">共88人验证</span>
+            <a class="info-2" href="result.html">验证列表</a>
+        </div>
+    </div>
+    <div class="search-area">
+        <input class="search-input" name="search" id="search" placeholder="手机号" />
+    </div>
+    <div class="verify-btn-area">
+        <button class="verify-btn" type="button" id="verify-btn" name="verify-btn">验证</button>
+    </div>
+    <div class="result-area">
+        <span class="result" id="result">result</span>
+    </div>
+
+    <script type="application/javascript" src="js/zepto.min.js"></script>
+    <script type="application/javascript">
+
+        var toast = (function(){
+            var mask_html = '<div id="mask" style="height:100%;width:100%;z-index:888;' +
+            'background:#EEE;box-sizing:border-box;border-radius:4px;position:absolute;top:0;left:0;opacity:0;"></div>\n';
+            var msg_html = '<div id="msg" style="padding:20px;z-index:999;width:180px;background:#888;' +
+            'box-sizing:border-box;border-radius:4px;margin:0 auto;position: absolute;top:150px;' +
+            'left:50%;margin-left:-90px;opacity:0.8;"></div>';
+            var _show_msg = function (msg) {
+                $('#mask').show();
+                $('#msg').show();
+                msg_list = msg.split('\n');
+                $('#msg').empty();
+                msg_list.forEach(function (msg) {
+                    $('#msg').append('<span style="display:block;text-align:center;box-sizing:border-box;' +
+                    'word-break:break-all;">' + msg + '</span>\n');
+                });
+            };
+
+            var _handle_time_out = function (time_out) {
+                time_out = time_out || -1;
+                if (time_out == -1) {
+                    return;
+                }
+                setTimeout(function () {
+                    close();
+                }, time_out);
+            };
+
+            var show_msg = function (msg, time_out) {
+                _show_msg(msg);
+                _handle_time_out(time_out);
+            };
+            var show_confirm_msg = function (msg, time_out) {
+                _show_msg(msg);
+                $('#msg').append('<a id="confirm_btn" href="javascript:void(0);" style="display:block;text-decoration:none;width:100%;' +
+                'background-color: #000;height: 40px;box-sizing: border-box;border-radius: 4px;text-align: center;' +
+                'line-height: 40px;color: #fff;margin-top:15px;opacity:0.9;">确认</a>\n');
+                _handle_time_out(time_out);
+            };
+            var close = function () {
+                $('#mask').hide();
+                $('#msg').hide();
+            };
+
+            return{
+                'show_msg': show_msg,
+                'show_confirm_msg': show_confirm_msg,
+                'close': close
+            };
+        })();
+
+        $('#verify-btn').on('click', function(e){
+            $.ajax({
+                type: 'GET',
+                url: '/projects',
+                data: { mobile: $('#search').val() },
+                dataType: 'json',
+                timeout: 300,
+                success: function(data){
+                    $('#result').html(data.project.html)
+                },
+                error: function(){
+                    alert('Network error!')
+                }
+            })
+        });
+    </script>
+</body>
+</html>
