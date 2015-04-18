@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>用户验证</title>
+    <title>验证结果</title>
     <style type="text/css">
         body{
             margin: 0;
@@ -23,20 +23,18 @@
         .btn{
             display: block;
             margin: 0 auto;
-            width: 250px;
+            width: 100%;
             height: 35px;
             box-sizing: border-box;
-            border: 0;
             border-radius: 4px;
-            background-color: rgb(133,192,40);
-            color: #fff;
+            background-color: #fff;
+            color: #83c20b;
+            border: 1px #83c20b solid;
             font-size: 14px;
-            line-height: 35px;
-            text-align: center;
         }
         .title{
             overflow: hidden;
-            background-color: rgb(133,192,40);
+            background-color: #83c20b;
         }
         .title p{
             height: 30px;
@@ -94,9 +92,22 @@
             margin-top: 20px;
         }
         .more{
-            margin-top: 20px;
+            width: 70%;
+            margin: 20px auto;
         }
 
+        a:link {
+            color: #ffffff;
+        }
+        a:visited {
+            color: #ffffff;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        a:active {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +136,7 @@
     </div>
 
     <div class="more">
-        <a id="more" class="btn">加载更多</a>
+        <button id="more-btn" class="btn">加载更多</button>
     </div>
 
     <div class="contact"><span>Tel: 021-64728282</span></div>
@@ -133,6 +144,20 @@
     <script type="application/javascript" src="static/js/zepto.min.js"></script>
     <script type="application/javascript" src="static/js/toast.js"></script>
     <script type="application/javascript">
+
+        var enable_more = function(){
+            $('#more-btn').css('background-color', '#83c20b');
+            $('#more-btn').css('color', '#fff');
+            $('#more-btn').attr('disabled', null);
+        };
+
+        var disable_more = function(){
+            $('#more-btn').css('background-color', '#fff');
+            $('#more-btn').css('color', '#83c20b');
+            $('#more-btn').css('border', '1px #83c20b solid');
+            $('#more-btn').attr('disabled', "disabled");
+        };
+
         var render_results = function (list) {
             list.forEach(function (item) {
                 var result_row = '<tr>\n' +
@@ -145,7 +170,11 @@
         };
 
         var fetch_data = function (current_page) {
-            $('#more').disabled = false;
+            disable_more();
+            if(!has_more){
+                toast.show_msg('没有更多', 1000);
+                return;
+            }
             $.ajax({
                 type: 'GET',
                 url: '/projects',
@@ -155,17 +184,17 @@
                 success: function(data){
                     $('#result').html(data.project.html);
                     render_results([]);
-                    $('#more').disabled = true;
+                    enable_more();
                 },
                 error: function(){
-                    $('#more').disabled = true;
+                    enable_more();
                     alert('Network error!')
                 }
             });
         };
 
         var bind_evt = function(){
-            $('#more').on('click', function(){
+            $('#more-btn').on('click', function(){
                 fetch_data(++current_page);
             });
         };
@@ -175,6 +204,7 @@
         };
 
         var current_page = 1;
+        var has_more = true;
         bind_evt();
         page_init();
 

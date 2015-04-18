@@ -15,7 +15,7 @@
             margin: 5px auto;
             box-sizing: border-box;
             border: 1px #D1D1D1 solid;
-            width: 250px;
+            width: 100%;
             height: 35px;
             padding: 5px;
             outline: none;
@@ -23,18 +23,18 @@
         .btn{
             display: block;
             margin: 0 auto;
-            width: 250px;
+            width: 100%;
             height: 35px;
             box-sizing: border-box;
-            border: 0;
             border-radius: 4px;
-            background-color: rgb(133,192,40);
-            color: #fff;
+            background-color: #fff;
+            color: #83c20b;
+            border: 1px #83c20b solid;
             font-size: 14px;
         }
         .title{
             overflow: hidden;
-            background-color: rgb(133,192,40);
+            background-color: #83c20b;
         }
         .title p{
             height: 30px;
@@ -82,24 +82,27 @@
             margin-top: -15px;
         }
         .search-area{
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin: 30px auto 15px auto;
+            width: 70%;
         }
         .verify-btn-area{
-            margin-bottom: 30px;
+            margin: 0 auto 30px auto;
+            width: 70%;
         }
 
-        .result-area i{
+        .left-label i{
             display: inline-block;
-            width: 5px;
-            height: 20px;
-            background-color: rgb(133,192,40);
+            width: 10px;
+            height: 30px;
+            background-color: #83c20b;
+            vertical-align: middle;
         }
         .label{
             line-height: 20px;
             height: 20px;
             display: inline-block;
-            margin-left: 20px;
+            margin-left: 5px;
+            vertical-align: middle;
         }
         .contact{
             text-align: center;
@@ -110,6 +113,18 @@
             width: 100%;
             border-collapse:collapse;
             margin: 10px auto;
+        }
+        a:link {
+            color: #ffffff;
+        }
+        a:visited {
+            color: #ffffff;
+        }
+        a:hover {
+            color: #ffffff;
+        }
+        a:active {
+            color: #ffffff;
         }
     </style>
 </head>
@@ -130,14 +145,16 @@
         </div>
     </div>
     <div class="search-area">
-        <input name="search" id="search" placeholder="请填写手机号" />
+        <input name="search" id="search" oninput="check_mobile()" placeholder="请填写手机号" />
     </div>
     <div class="verify-btn-area">
-        <button class="btn" type="button" id="verify-btn" name="verify-btn">验证</button>
+        <button class="btn" type="button" id="verify-btn" name="verify-btn" disabled="disabled">验证</button>
     </div>
-    <div class="result-area">
+    <div class="left-label">
         <i></i>
         <span class="label">最新验证</span>
+    </div>
+    <div class="result-area">
         <table bordercolor="#000000" cellpadding="8" align="center" border="1">
             <thead>
                 <tr>
@@ -160,6 +177,21 @@
     <script type="application/javascript" src="static/js/zepto.min.js"></script>
     <script type="application/javascript" src="static/js/toast.js"></script>
     <script type="application/javascript">
+
+        var check_mobile = function(){
+            mobile_regx = /^0?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+            if(!mobile_regx.test($('#search').val())){
+                $('#verify-btn').css('background-color', '#fff');
+                $('#verify-btn').css('color', '#83c20b');
+                $('#verify-btn').css('border', '1px #83c20b solid');
+                $('#verify-btn').attr('disabled', "disabled");
+            }else{
+                $('#verify-btn').css('background-color', '#83c20b');
+                $('#verify-btn').css('color', '#fff');
+                $('#verify-btn').attr('disabled', null);
+            }
+        };
+
         var set_count = function (day, total) {
             $('#day').html('今日：' + day);
             $('#total').html('累计：' + total);
