@@ -4,15 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>商家登录</title>
+    <style type="text/css">
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .login-title{
+            margin-top: 50px;
+            text-align: center;
+        }
+        .login-title img{
+            width: 80px;
+            height: 80px;
+        }
+        .login-title span{
+            display: block;
+            margin-top: 20px;
+            line-height: 20px;
+            height: 20px;
+            font-size: 20px;
+            box-sizing: border-box;
+        }
+
+        .login{
+            text-align: center;
+            margin-top: 20px;
+        }
+        input{
+            display: block;
+            margin: 5px auto;
+            box-sizing: border-box;
+            border: 1px #D1D1D1 solid;
+            width: 250px;
+            height: 35px;
+            padding: 5px;
+            outline: none;
+        }
+        .login-btn-area{
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn{
+            display: block;
+            margin: 0 auto;
+            width: 250px;
+            height: 35px;
+            box-sizing: border-box;
+            border: 0;
+            border-radius: 4px;
+            background-color: rgb(133,192,40);
+            color: #fff;
+            font-size: 14px;
+        }
+        .login-btn-area span{
+            display: block;
+            margin-top: 15px;
+            line-height: 15px;
+            height: 15px;
+            font-size: 15px;
+        }
+    </style>
 </head>
 <body>
     <form action="/" method="post">
+        <div class="login-title">
+            <img src="static/images/logo.png">
+            <span>走起商户管理后台</span>
+        </div>
         <div class="login">
-            <input class="login-user" type="text" name="user" placeholder="用户名" />
-            <input class="login-password" type="password" name="password" placeholder="密码" />
+            <input class="login-user" type="text" name="user" placeholder="请填写用户名" />
+            <input class="login-password" type="password" name="password" placeholder="请填写密码" />
         </div>
         <div class="login-btn-area">
-            <button type="submit" class="login-btn">登录</button>
+            <button type="submit" class="btn">登录</button>
+            <span>Tel: 021-64728282</span>
         </div>
     </form>
 </body>

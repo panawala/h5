@@ -31,6 +31,8 @@
             background-color: rgb(133,192,40);
             color: #fff;
             font-size: 14px;
+            line-height: 35px;
+            text-align: center;
         }
         .title{
             overflow: hidden;
@@ -56,13 +58,6 @@
             height: 20px;
             vertical-align: middle;
         }
-        .info-2{
-            display: inline-block;
-            margin-left: 20px;
-            line-height: 20px;
-            height: 20px;
-            vertical-align: middle;
-        }
         .info-3{
             display: inline-block;
             box-sizing: border-box;
@@ -81,27 +76,11 @@
             top: 50%;
             margin-top: -15px;
         }
-        .search-area{
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-        .verify-btn-area{
-            margin-bottom: 30px;
-        }
 
-        .result-area i{
-            display: inline-block;
-            width: 5px;
-            height: 20px;
-            background-color: rgb(133,192,40);
-        }
-        .label{
-            line-height: 20px;
-            height: 20px;
-            display: inline-block;
-            margin-left: 20px;
-        }
         .contact{
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
             text-align: center;
             margin: 10px auto;
             font-size: 20px;
@@ -111,86 +90,94 @@
             border-collapse:collapse;
             margin: 10px auto;
         }
+        .result-area{
+            margin-top: 20px;
+        }
+        .more{
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
-    <div id="mask" style="display:none;height:100%;width:100%;z-index:888;background:#EEE;box-sizing:border-box;border-radius:4px;position:absolute;top:0;left:0;opacity:0;"></div>
-    <div id="msg" style="display:none;padding:20px;z-index:999;width:180px;background:#888;box-sizing:border-box;border-radius:4px;margin:0 auto;position: absolute;top:150px;left:50%;margin-left:-90px;opacity:0.8;">
-        <span style="display:block;text-align:center;box-sizing:border-box;word-break:break-all;"></span>
-    </div>
-
     <div class="title">
         <p>商户用户名</p>
         <div class="info">
-            <span id="day" class="info-1">今日：231</span>
-            <span id="total" class="info-2">累计：1233</span>
+            <span class="info-1">进入验证页面</span>
             <a class="info-3" href="result.html">
                 <img src="static/images/arrow.png" />
             </a>
         </div>
     </div>
-    <div class="search-area">
-        <input name="search" id="search" placeholder="请填写手机号" />
-    </div>
-    <div class="verify-btn-area">
-        <button class="btn" type="button" id="verify-btn" name="verify-btn">验证</button>
-    </div>
+
     <div class="result-area">
-        <i></i>
-        <span class="label">最新验证</span>
         <table bordercolor="#000000" cellpadding="8" align="center" border="1">
             <thead>
                 <tr>
-                    <th>用户名</th>
-                    <th>手机</th>
-                    <th>验证时间</th>
+                    <th align="center">用户名</th>
+                    <th align="center">手机</th>
+                    <th align="center">验证时间</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td id="name">-</td>
-                    <td id="mobile">-</td>
-                    <td id="date">-</td>
-                </tr>
+            <tbody id="results">
             </tbody>
         </table>
     </div>
+
+    <div class="more">
+        <a id="more" class="btn">加载更多</a>
+    </div>
+
     <div class="contact"><span>Tel: 021-64728282</span></div>
 
     <script type="application/javascript" src="static/js/zepto.min.js"></script>
     <script type="application/javascript" src="static/js/toast.js"></script>
     <script type="application/javascript">
-        var set_count = function (day, total) {
-            $('#day').html('今日：' + day);
-            $('#total').html('累计：' + total);
+        var render_results = function (list) {
+            list.forEach(function (item) {
+                var result_row = '<tr>\n' +
+                        '   <td align="center">' + item.name + '</td>\n' +
+                        '   <td align="center">' + item.mobile + '</td>\n' +
+                        '   <td align="center">' + item.date + '</td>\n' +
+                        '</tr>\n';
+                $('#results').append(result_row);
+            });
         };
 
-        var show_result = function(data){
-            if(data.state == 'success'){
-                $('#name').html(data.name);
-                $('#mobile').html(data.mobile);
-                $('#date').html(data.date);
-                toast.show_msg('验证成功', 1000);
-            }else if(data.state == 'error'){
-                toast.show_confirm_msg('改号码已验证过')
-            }
-        };
-
-        $('#verify-btn').on('click', function(e){
+        var fetch_data = function (current_page) {
+            $('#more').disabled = false;
             $.ajax({
                 type: 'GET',
                 url: '/projects',
-                data: { mobile: $('#search').val() },
+                data: { current_page: current_page },
                 dataType: 'json',
                 timeout: 300,
                 success: function(data){
-                    $('#result').html(data.project.html)
+                    $('#result').html(data.project.html);
+                    render_results([]);
+                    $('#more').disabled = true;
                 },
                 error: function(){
+                    $('#more').disabled = true;
                     alert('Network error!')
                 }
             });
-        });
+        };
+
+        var bind_evt = function(){
+            $('#more').on('click', function(){
+                fetch_data(++current_page);
+            });
+        };
+
+        var page_init = function(){
+            fetch_data(current_page);
+        };
+
+        var current_page = 1;
+        bind_evt();
+        page_init();
+
     </script>
 </body>
 </html>

@@ -15,10 +15,24 @@
             background-color: #525572;
             overflow: hidden;
             height: 70vh;
-            background-image: url(static/images/banner.png);
-            background-size: auto 90%;
-            background-repeat: no-repeat;
-            background-position: center 20px;
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+            /* table-cell宽度根据内容自适应 */
+            width: 3000px;
+            position: relative;
+        }
+        .banner-container img{
+            width: 250px;
+        }
+        .banner-container span{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -145px;
+            margin-left: -84px;
+            color: rgb(110, 192, 224);
+            font-size: 12px;
         }
         .link_container{
             margin-top: 10px;
@@ -97,6 +111,8 @@
     <img src="static/images/safari.png" style="margin-left: 30px;margin-right: 5px;width: 90%;">
 </div>
 <div class="banner-container">
+    <img src="static/images/banner.png" />
+    <span>473</span>
 </div>
 <div class="link_container">
     <a id="app_store" href="https://itunes.apple.com/cn/app/zou-qi-zuo-peng-you-quan-li/id980145972?ls=1&mt=8" class="app_store" >
