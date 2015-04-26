@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head lang="zh-cn">
+    <meta charset="UTF-8">
     <title>创建一个固定价格的酒店</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://m-test.xmonster.cn/static/css/m-common.css?v=9f12c84032cf980d2def38b915773e50">
@@ -104,23 +105,7 @@
             font-size: 12px;
             padding-top: 3px;
         }
-        a:link {
-            color: #ffffff;
-            font-size: 20px;
-        }
-        a:visited {
-            color: #ffffff;
-            font-size: 20px;
-        }
-        a:hover {
-            color: #ffffff;
-            font-size: 20px;
-        }
-        a:active {
-            color: #ffffff;
-            font-size: 20px;
-        }
-        .go_together{
+        a.go_together link{
             width: 100%;
             height: 43px;
             background-color: #ED3260;
@@ -132,10 +117,49 @@
             -webkit-border-radius: 4px;
             -moz-border-radius: 4px;
             border-radius: 4px;
+            color: #ffffff;
+            font-size: 20px;
         }
+        a.go_together:visited {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        a.go_together:hover {
+            color: #ffffff;
+            font-size: 20px;
+        }
+        a.go_together:active {
+            color: #ffffff;
+            font-size: 20px;
+        }
+
         .intent_space{
             height: 120px;
             width: 100%;
+        }
+        a.promotion{
+            display: block;
+            width: 100%;
+            height: 50px;
+            text-decoration: none;
+            color: rgb(56,56,56);
+            font-size: 14px;
+            line-height: 50px;
+            margin: 20px auto;
+            box-sizing: border-box;
+            border-bottom: 1px #B5B5B5 solid;
+            border-top: 1px #B5B5B5 solid;
+        }
+        a.promotion img{
+            width: 25px;
+            height: 25px;
+            display: inline-block;
+            float: left;
+            margin-top: 12px;
+        }
+        a.promotion span{
+            display: inline-block;
+            margin-left: 10px;
         }
     </style>
     <style type="text/css">
@@ -226,6 +250,12 @@
     <em class="rich-media-meta">Mcake网店地址</em>
 </div>
 <p><img src="http://7tszlo.com1.z0.glb.clouddn.com/1a2c98ce-dc08-11e4-b8cc-00163e023969.png" alt="创建一个固定价格的酒店"></p>
+
+<a class="promotion" href="javascript:void(0)">
+    <img src="static/images/1.png">
+    <span>榴莲蛋糕半价</span>
+</a>
+
 <p>这里写摘要</p><p>这里写你的初始化内容</p>
 <a href="" id="go_together" class="go_together">我也想去</a>
 <div class="dot-line-div">
