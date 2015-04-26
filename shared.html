@@ -137,6 +137,9 @@
             height: 120px;
             width: 100%;
         }
+        .promotions{
+            margin: 20px auto;
+        }
         a.promotion{
             display: block;
             width: 100%;
@@ -145,17 +148,23 @@
             color: rgb(56,56,56);
             font-size: 14px;
             line-height: 50px;
-            margin: 20px auto;
             box-sizing: border-box;
-            border-bottom: 1px #B5B5B5 solid;
-            border-top: 1px #B5B5B5 solid;
+            border-bottom: 1px #E5E5E5 solid;
         }
-        a.promotion img{
+        a.promotion .left-img{
             width: 25px;
             height: 25px;
             display: inline-block;
             float: left;
             margin-top: 12px;
+        }
+        a.promotion .right-img{
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            float: right;
+            margin-right: 10px;
+            margin-top: 20px;
         }
         a.promotion span{
             display: inline-block;
@@ -251,10 +260,19 @@
 </div>
 <p><img src="http://7tszlo.com1.z0.glb.clouddn.com/1a2c98ce-dc08-11e4-b8cc-00163e023969.png" alt="创建一个固定价格的酒店"></p>
 
-<a class="promotion" href="javascript:void(0)">
-    <img src="static/images/1.png">
-    <span>榴莲蛋糕半价</span>
-</a>
+<div class="promotions">
+    <a class="promotion" href="javascript:void(0)">
+        <img class="left-img" src="static/images/1.png">
+        <span>榴莲蛋糕半价</span>
+        <img class="right-img" src="static/images/right-arrow.png">
+    </a>
+    <a class="promotion" href="javascript:void(0)">
+        <img class="left-img" src="static/images/2.png">
+        <span>榴莲蛋糕半价</span>
+        <img class="right-img" src="static/images/right-arrow.png">
+    </a>
+</div>
+
 
 <p>这里写摘要</p><p>这里写你的初始化内容</p>
 <a href="" id="go_together" class="go_together">我也想去</a>
