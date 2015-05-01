@@ -1,7 +1,6 @@
 /**
  * Created by panweilong on 15/4/18.
  */
-
 (function(window, $, undefined){
     window.toast = window.toast || (function(){
         var _init_toast = function () {
