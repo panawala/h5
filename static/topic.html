@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<form class="form-horizontal" role="form" method="post" action="/topic/update" onsubmit="return checkForm()">
+    <input type="hidden" name="type" value="5" />
+    <div class="form-group">
+        <label for="title" class="col-sm-2 control-label">专题名称</label>
+        <div class="col-sm-6">
+            <input type="text" id="title" class="form-control" placeholder="专题名称（必填）" data-bind="value: title">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">地点</label>
+        <div class="col-sm-6">
+            <label class="radio-inline">
+                <input type="radio" value="beijing" data-bind="checked: city"> 北京
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="shanghai" data-bind="checked: city"> 上海
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">类型</label>
+        <div class="col-sm-6">
+            <label class="radio-inline">
+                <input type="radio" value="1" data-bind="checked: category"> 展览
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="2" data-bind="checked: category"> 集市活动
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="3" data-bind="checked: category"> 餐厅下午茶
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="4" data-bind="checked: category"> 户外短途
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="5" data-bind="checked: category"> 演唱会
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="6" data-bind="checked: category"> 话剧演出
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="0" data-bind="checked: category"> 其他
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">小图</label>
+        <div class="col-sm-6">
+            <label class="radio-inline">
+                <input type="radio" value="0" data-bind="checked: list_type"> 是
+            </label>
+            <label class="radio-inline">
+                <input type="radio" value="1" data-bind="checked: list_type"> 否
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label form-inline">banner</label>
+        <div class="col-sm-6">
+            <input name="bannerUpload" type="file" data-url="/fileupload" placeholder="banner" multiple>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-6">
+            <input type="hidden" data-bind="value: banner" />
+            <img data-bind="attr{ src: banner }" alt="banner" class="img-rounded">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label form-inline">内嵌banner</label>
+        <div class="col-sm-6">
+            <input id="inner_bannerUpload" type="file" data-url="/fileupload" placeholder="banner" multiple>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-6">
+            <input type="hidden" data-bind="value: inner_banner" />
+            <img data-bind="attr{ src: inner_banner }" alt="banner" class="img-rounded">
+        </div>
+    </div>
+
+    <div data-bind="foreach: project_list">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">项目</label>
+            <div class="col-sm-6 form-inline">
+                <input type="text" class="form-control" data-bind="value: id" placeholder="项目ID">
+                <button type="button" class="btn btn-primary" data-bind="click: $parent.remove_project">删除</button>
+            </div>
+            <div class="col-sm-offset-2 col-sm-6">
+                <input type="text" class="form-control" data-bind="value: title" placeholder="标题">
+            </div>
+            <div class="col-sm-offset-2 col-sm-6">
+                <textarea type="text" rows="4" class="form-control" data-bind="value: desc" placeholder="详情内容">
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-6">
+            <button data-bind="click: add_project" type="button" class="btn btn-primary">增加</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-6">
+            <button data-bind="click: submit" type="submit" class="btn btn-primary">提交</button>
+        </div>
+    </div>
+</form>
+
+<script src="js/zepto.min.js"></script>
+<script src="js/knockout-3.3.0.js"></script>
+<script type="text/javascript">
+
+    var Project = function(){
+        this.id = ko.observable('');
+        this.title = ko.observable('');
+        this.desc = ko.observable('');
+    };
+
+    var TopicViewModel = function() {
+        var self = this;
+        this.id = ko.observable('0');
+        this.title = ko.observable('');
+        this.city = ko.observable('shanghai');
+        this.category = ko.observable('1');
+        this.list_type = ko.observable('1');
+        this.banner = ko.observable('');
+        this.inner_banner = ko.observable('');
+
+        project_list = [];
+        for(var i = 0; i < 10; i++){
+            project_list.push(new Project());
+        }
+        this.project_list = ko.observableArray(project_list);
+
+        this.add_project = function() {
+            this.project_list.push(new Project());
+        }.bind(this);
+        this.remove_project = function(project) {
+            this.project_list.remove(project);
+        }.bind(this);
+
+        self.submit = function() {
+            post_data = ko.toJSON(self);
+            console.log(post_data);
+            post_data_json = JSON.parse(post_data);
+            post_data_json.content = {};
+            post_data_json.content.project_list = post_data_json.project_list.filter(function(item){
+                if(item.id == ''){
+                    return false;
+                }else{
+                    return true;
+                }
+            });
+            post_data_json.content.banner = ko.utils.unwrapObservable(self.banner());
+            post_data_json.content.inner_banner = ko.utils.unwrapObservable(self.inner_banner());
+            console.log(post_data_json);
+            post_data_json.content = JSON.stringify(post_data_json.content);
+            console.log(post_data_json);
+        };
+    };
+
+    var topicViewModel = new TopicViewModel();
+
+    ko.applyBindings(topicViewModel);
+
+</script>
+
+</body>
+</html>
