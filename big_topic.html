@@ -20,21 +20,25 @@
         .cover{
             height: 250px;
             box-sizing: border-box;
-            background-image: url(static/images/cover.png);
-            background-size: 100% 100%;
-            padding-top: 10px;
+            position: relative;
+        }
+        .cover-img{
+            height: 250px;
+            width: 100%;
         }
         .category{
             color: #fff;
             background-image: url(static/images/category.png);
             background-repeat: no-repeat;
             background-size: 120px 40px;
-            margin: 20px 0 0 0;
             padding: 0 0 0 20px;
             height: 40px;
             line-height: 40px;
+            position: absolute;
+            top: 10px;
+            width: 200px;
         }
-        .category img{
+        .category-img{
             display: inline-block;
             width: 24px;
             vertical-align: middle;
@@ -43,8 +47,10 @@
         .price{
             color: #fff;
             margin-top: 130px;
-            margin-right: 10px;
             text-align: right;
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
         }
         .price span{
             display: inline-block;
@@ -92,8 +98,9 @@
     <div class="banner-list">
        <div class="feed">
        <div class="cover">
+           <img class="cover-img" src="static/images/cover.png">
            <p class="category">
-               <img src="static/images/dining-icon.png">
+               <img class="category-img" src="static/images/dining-icon.png">
                下午茶
            </p>
            <p class="price">
@@ -108,8 +115,9 @@
        </div>
        <div class="feed">
         <div class="cover">
+            <img class="cover-img" src="static/images/cover.png">
             <p class="category">
-                <img src="static/images/dining-icon.png">
+                <img class="category-img" src="static/images/dining-icon.png">
                 下午茶
             </p>
             <p class="price">
