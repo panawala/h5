@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>浮动两栏布局测试</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: auto;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        #container {
+            background: #ffe3a6;
+        }
+
+        #wrapper {
+            display: inline-block;
+            border-left: 200px solid #d4c376;/*==此值等于左边栏的宽度值==*/
+            position: relative;
+            vertical-align: bottom;
+        }
+
+        #sidebar {
+            float: left;
+            width: 200px;
+            margin-left: -200px;/*==此值等于左边栏的宽度值==*/
+            position: relative;
+        }
+
+        #main {
+            float: left;
+        }
+
+        #main,
+        #sidebar{
+            min-height: 200px;
+            height: auto !important;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="wrapper">
+        <div id="sidebar">Left Sidebar</div>
+        <div id="main">Main Content</div>
+    </div>
+</div>
+
+
+</body>
+</html>
