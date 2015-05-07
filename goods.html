@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0">
+    <title>走起 - 商户管理平台</title>
+    <link rel="stylesheet" type="text/css" href="static/css/shop-goods-promotion.css">
+    <style type="text/css">
+        .clearfix { *zoom: 1;}
+        .clearfix:after{ content: ""; display: block; height: 0; visibility:hidden; clear: both;}
+
+        .goods-container{
+            margin: 20px 0 40px 0;
+        }
+
+        .item{
+            display: block;
+            position: relative;
+            margin: 20px;
+            text-align: center;
+            color: #4a4a4a;
+            height: 50px;
+            line-height: 50px;
+        }
+        a.item:visited{
+           color: #4a4a4a;
+        }
+        a.item:hover{
+           color: #4a4a4a;
+        }
+        a.item:active{
+           color: #4a4a4a;
+        }
+
+        .order-type{
+            box-sizing: border-box;
+            width: 60px;
+            float: left;
+            background-color: #83C20B;
+            color: #fff;
+            border: 1px #83C20B solid;
+        }
+
+        .order-title{
+            position: relative;
+            box-sizing: border-box;
+            border: 1px #979797 solid;
+            margin-left: 60px;
+            text-align: left;
+            border-left: 0;
+            padding-left: 10px;
+            padding-right: 50px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-title img{
+            position: absolute;
+            top: 50%;
+            height: 26px;
+            margin-top: -13px;
+            right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="title">
+    <p>test_name</p>
+    <div class="info">
+        <span id="day">今日：-</span>
+        <span id="total">累计：-</span>
+    </div>
+    <a class="logout" href="/auth/logout">登出</a>
+</div>
+<div class="goods-container">
+    <a class="clearfix item">
+        <div class="order-type">商品</div>
+        <div class="order-title">
+            新增啥给你拍
+            <img src="static/images/green-arrow.png">
+        </div>
+    </a>
+    <a class="clearfix item">
+        <div class="order-type">优惠</div>
+        <div class="order-title">
+            新增啥给你拍
+            <img src="static/images/green-arrow.png">
+        </div>
+    </a>
+</div>
+<div class="footer">
+    <span>走起 - 商户管理平台</span>
+    <span>400-857-0002</span>
+</div>
