@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>创建一个固定价格的酒店</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        *{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0;font-style:normal}
+        html{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;line-height:1.6}
+        body{word-wrap:break-word;-webkit-hyphens:auto;-ms-hyphens:auto;hyphens:auto}
+        html, body{
+            margin: 0;
+            padding: 0;
+            background-color: #F8F8F8;
+        }
+        .clearfix { *zoom: 1;}
+        .clearfix:after{ content: ""; display: block; height: 0; visibility:hidden; clear: both;}
+
+        .container{
+            padding: 10px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #FFF;
+        }
+
+        .mb5{
+            margin-bottom: 5px;
+        }
+
+        .tip-item a:link,a:visited,a:hover,a:active{
+            text-decoration: none;
+        }
+
+        .pt0{
+            padding-top: 0;
+        }
+        .pr{
+            position: relative;
+        }
+        .pr .avatar{
+            width: 50px;
+            height: 50px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            position: absolute;
+            top: 10px;
+        }
+        .pr .comment{
+            margin-left: 60px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border-top: 0px #D2D2D2 solid;
+            margin-right: -10px;
+            padding-right: 10px;
+        }
+        .comment .name{
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+        .comment .content{
+            font-size: 12px;
+            color: #5A5A5A;
+        }
+        .max-3-lines{
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .comment-images{
+            width: 240px;
+            margin-top: 5px;
+        }
+        .comment-images img{
+            width: 60px;
+            height: 60px;
+            margin-top: 2px;
+            margin-right: 5px;
+        }
+        .bottom-info{
+        }
+        .bottom-info .time{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: left;
+        }
+        .bottom-info .tag{
+            font-size: 10px;
+            font-weight: bold;
+            color: #D94648;
+            float: left;
+            margin-left: 5px;
+        }
+        .bottom-info .like-image{
+            width: 13px;
+            height: 13px;
+            float: right;
+            margin-right: 2px;
+        }
+        .bottom-info .like{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: right;
+        }
+        .reply-info{
+            background-color: #F3F3F3;
+            padding-left: 10px;
+            margin-top: 5px;
+        }
+        .reply-info .arrow{
+            width: 10px;
+            height: 10px;
+            background-color: #F3F3F3;
+            position: absolute;
+            left: 15px;
+            top: -5px;
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+        .reply-info .text{
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+        }
+        .reply-info .text .user{
+            color: #9B9B9B;
+        }
+        .reply-info .text .reply{
+            color: #333333;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container mb5 pr pt0">
+       <img class="avatar" src="static/images/cover.png" />
+       <div class="comment">
+           <div class="name">用户名</div>
+           <div class="content">中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人
+               中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人...</div>
+           <div class="comment-images">
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+           </div>
+           <div class="clearfix bottom-info">
+                <span class="time">2天前</span>
+                <span class="tag">实地体验</span>
+                <span class="like">3000+</span>
+                <img class="like-image" src="static/images/like.png">
+           </div>
+       </div>
+    </div>
+
+    <div class="container mb5 pr pt0">
+        <img class="avatar" src="static/images/cover.png" />
+        <div class="comment">
+            <div class="name">用户名</div>
+            <div class="content max-3-lines">中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人
+                中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人...</div>
+            <div class="comment-images">
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+            </div>
+            <div class="clearfix bottom-info">
+                <span class="time">2天前</span>
+                <span class="tag">实地体验</span>
+                <span class="like">34</span>
+                <img class="like-image" src="static/images/like.png">
+            </div>
+            <div class="pr reply-info">
+                <div class="arrow"></div>
+                <div class="text">
+                    <span class="user">走起回复:</span>
+                    <span class="reply">活动不能带宠物哦!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb5 pr pt0">
+        <img class="avatar" src="static/images/cover.png" />
+        <div class="comment">
+            <div class="name">用户名</div>
+            <div class="content max-3-lines">中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人
+                中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人...</div>
+            <div class="comment-images">
+            </div>
+            <div class="clearfix bottom-info">
+                <span class="time">2天前</span>
+                <span class="tag"></span>
+                <span class="like">3</span>
+                <img class="like-image" src="static/images/like.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb5 pr pt0">
+        <img class="avatar" src="static/images/cover.png" />
+        <div class="comment">
+            <div class="name">用户名</div>
+            <div class="content max-3-lines"></div>
+            <div class="comment-images">
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+                <img src="static/images/cover.png" />
+            </div>
+            <div class="clearfix bottom-info">
+                <span class="time">2天前</span>
+                <span class="tag">实地体验</span>
+                <span class="like"></span>
+                <img class="like-image" src="static/images/like.png">
+            </div>
+            <div class="pr reply-info">
+                <div class="arrow"></div>
+                <div class="text">
+                    <span class="user">走起回复:</span>
+                    <span class="reply">活动不能带宠物哦!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
