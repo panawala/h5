@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>创建一个固定价格的酒店</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://m.xmonster.cn/static/m-build/css/go-reason.css?v=285b93b0a39c0dd1c990878a05899243">
+    <style type="text/css">
+        html, body{
+            margin: 0;
+            padding: 0;
+            background-color: #F8F8F8;
+        }
+        .clearfix { *zoom: 1;}
+        .clearfix:after{ content: ""; display: block; height: 0; visibility:hidden; clear: both;}
+
+        .container{
+            padding: 10px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #FFF;
+        }
+
+        .mb5{
+            margin-bottom: 5px;
+        }
+
+        .banner{
+            margin-bottom: -5px;
+        }
+        .banner img{
+            width: 100%;
+        }
+        .title .title-name{
+            color: #333333;
+            font-size: 18px;
+            padding: 2px 0;
+        }
+        .title .time-address{
+            color: #9B9B9B;
+            font-size: 12px;
+        }
+        .price{
+            position: relative;
+        }
+        .price .text{
+            height: 30px;
+            line-height: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .price .sub-text{
+            font-size: 0.1em;
+        }
+        .price .action{
+            display: inline-block;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border: 1px #D94648 solid;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            color: #D94648;
+            text-decoration: none;
+            padding: 0 15px;
+            font-size: 0.9em;
+            height: 30px;
+            line-height: 30px;
+            width: 75px;
+            text-align: center;
+        }
+        .icon-size-pos{
+            position: absolute;
+            top: 50%;
+        }
+        .tip-item{
+            padding-left: 45px;
+            padding-right: 45px;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .left-icon{
+            left: 10px;
+            width: 26px;
+            height: 26px;
+            margin-top: -13px;
+        }
+        .right-icon{
+            right: 10px;
+            width: 5px;
+            height: 8px;
+            margin-top: -4px;
+        }
+        .icon-text{
+            font-size: 12px;
+        }
+
+        .pt0{
+            padding-top: 0;
+        }
+        .pr{
+            position: relative;
+        }
+        .pr .avatar{
+            width: 50px;
+            height: 50px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            position: absolute;
+            top: 10px;
+        }
+        .pr .comment{
+            margin-left: 60px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border-top: 1px #D2D2D2 solid;
+            margin-right: -10px;
+            padding-right: 10px;
+        }
+        .comment .name{
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+        .comment .content{
+            font-size: 12px;
+            color: #5A5A5A;
+        }
+        .max-3-lines{
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .comment-images{
+            width: 240px;
+            margin-top: 5px;
+        }
+        .comment-images img{
+            width: 60px;
+            height: 60px;
+            margin-top: 2px;
+            margin-right: 5px;
+        }
+        .bottom-info{
+        }
+        .bottom-info .time{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: left;
+        }
+        .bottom-info .tag{
+            font-size: 10px;
+            font-weight: bold;
+            color: #D94648;
+            float: left;
+            margin-left: 5px;
+        }
+        .bottom-info .like-image{
+            width: 13px;
+            height: 13px;
+            float: right;
+            margin-right: 2px;
+        }
+        .bottom-info .like{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: right;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="banner">
+        <img class="banner" src="http://7tszlo.com1.z0.glb.clouddn.com/6c8e2f64-036e-11e5-bbe9-00163e002e64.jpg" />
+    </div>
+    <div class="title container mb5">
+        <div class="title-name">珞迦瑜伽】体验纯粹瑜伽精神</div>
+        <div class="time-address">珞迦瑜伽·05月30日 13:30-15:00</div>
+    </div>
+
+    <div class="container tip-item mb5">
+        <img class="icon-size-pos left-icon" src="static/images/2.png">
+        <span class="icon-text">消费每满10元 圣诞夜现金抽奖大放送</span>
+        <a href="static"><img class="icon-size-pos right-icon" src="static/images/arrow-thin.png"></a>
+    </div>
+
+    <div class="container tip-item">
+        <img class="icon-size-pos left-icon" src="static/images/comment.png">
+        <span class="icon-text">评论（3）</span>
+        <a href="static"><img class="icon-size-pos right-icon" src="static/images/arrow-thin.png"></a>
+    </div>
+    <div class="container mb5 pr pt0">
+       <img class="avatar" src="static/images/cover.png" />
+       <div class="comment">
+           <div class="name">用户名</div>
+           <div class="content max-3-lines">中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人
+               中国大陆译为大白，为大白，在电影《超能陆战队》中是主角小宏(Hiro)的哥哥(Tadashi)创造出来的机器人。它是只充气机器人,也是个医疗伴侣机器人...</div>
+           <div class="comment-images">
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+               <img src="static/images/cover.png" />
+           </div>
+           <div class="clearfix bottom-info">
+                <span class="time">2天前</span>
+                <span class="tag">实地体验</span>
+                <span class="like">3</span>
+                <img class="like-image" src="static/images/like.png">
+           </div>
+       </div>
+
+    </div>
+
+
+    <div class="clearfix container price mb5">
+        <span class="text">80</span>
+        <span class="sub-text">元</span>
+        <s class="sub-text">原价180元</s>
+        <a class="fr action" href="/static/m/app_download.html">
+            报名
+        </a>
+    </div>
+
+    <div class="content container mb5">
+        <div class="clearfix liyou-container">
+            <div class="intro">
+                <img src="https://m.xmonster.cn/static/images/iconfont-iconfontxiju.png" class="category-icon">
+                <div class="arrow"></div>
+                <div class="brand">
+                    <img src="https://m.xmonster.cn/static/images/iconfont-yinhao.png" class="yinhao">
+                    <span class="category">室内瑜伽|走起理由</span>
+                </div>
+                <div class="text">
+                    享受出汗的过程，听从身体的声音。
+                </div>
+            </div>
+        </div>
+
+        <p style="line-height: 1.5em;"><span style="font-size: 14px; font-family: 宋体, SimSun; color: rgb(89, 89, 89);">老呆在办公室的座椅上，是不是感觉浑身僵硬？珞迦瑜伽的专业课程体验可以让你在出汗的过程中找到心理的放松和平静，缓解压力与疲劳。</span><br></p><p style="line-height: 1.5em; white-space: normal;"><span style="font-family:宋体"></span><br></p><p style="line-height: 1.5em; white-space: normal;"><br></p><p style="line-height: 1.5em; white-space: normal;"><img src="http://7tszlo.com1.z0.glb.clouddn.com/acab42a6-02e4-11e5-9101-00163e002e64.jpg" title="1414033900.jpg" alt="1414033900.jpg"></p><p style="line-height: 4em; white-space: normal; text-align: left;"><span style="font-family: arial, helvetica, sans-serif; color: rgb(89, 89, 89);"><strong>About&nbsp;<span style="font-family: arial, helvetica, sans-serif; font-size: 14px;">Raja Yoga</span></strong></span></p><p style="line-height: 1.5em;"><span style="font-size: 14px; color: rgb(89, 89, 89);"><span style="font-size: 14px; font-family: 宋体, SimSun;">2005年，Raja Yoga开设了在上海的第一家专业瑜伽馆，主张纯粹的瑜伽精神，把瑜伽当作一种生活方式。目前旗舰店（徐汇店）是上海场地最大的纯粹瑜伽馆，一楼大厅，二楼休息区为主。三楼是教学教室，四楼屋顶露天瑜伽台。</span><span style="font-size: 14px; font-family: 宋体, SimSun; line-height: 1.5em;">珞迦邀请世界范围内优秀的瑜伽导师，提供独一无二的练习场馆，工作、家庭之外的第三空间，遵循“大隐于市”的哲学理念，一杯清茶，几缕烛光，身心在这融化。在珞迦，瑜伽绝不仅仅是几个体式，日积月累的练习之后，融入生活，以一种温柔而强烈的方式深入我们生活的每一个细微之处，内化为每一个会员的生活理念和态度。</span></span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89); font-size: 14px;">远离疾病，让心灵平静而快乐，这是珞迦存在的意义。</span></p><p><br></p><p><br></p><p><br></p><p><img src="http://7tszlo.com1.z0.glb.clouddn.com/7e36a7b0-02e6-11e5-9101-00163e002e64.jpg" title="1414033118.jpg" alt="1414033118.jpg"></p><p style="line-height: 4em;"><span style="color: rgb(89, 89, 89);"><strong>About 哈他瑜伽</strong></span><br></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89); font-family: 宋体, SimSun; font-size: 14px;">在哈他（Hatha）这个词中，“哈”（ha）的意思是太阳，“他”（tha）的意思是月亮。它代表男与女，日与夜，阴与阳，冷与热，以及其他任何相辅相成的两个对立面的平衡。哈他瑜伽意指阴和阳两种能量的“结合”或联合起来，达到身心之间的平衡，使我们保持理想的健康状况。</span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89); font-size: 14px;">适合：初学者，精神压力大的人，亚健康状态人群</span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89); font-size: 14px;">特点：哈他瑜伽可以练得很艰深，也可以练得很简单，完全听从于练习者自己的安排。</span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89);"><br></span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89);"><br></span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89);"><br></span></p><p style="line-height: 1.5em;"><span style="font-family: 宋体, SimSun; color: rgb(89, 89, 89);"><img src="http://7tszlo.com1.z0.glb.clouddn.com/7917c934-02e7-11e5-9101-00163e002e64.jpg" title="1.pic_hd副本.jpg" alt="1.pic_hd副本.jpg"></span></p><fieldset class="tn-Powered-by-XIUMI" style="padding: 0px; border: 0px currentcolor; border-image-source: none; text-align: justify; color: inherit; clear: both; font-family: inherit; font-size: 1em; font-weight: inherit; text-decoration: inherit; margin-top: 0px; margin-bottom: 0px; white-space: normal; box-sizing: border-box;"><fieldset class="tn-Powered-by-XIUMI" style="margin: 0.8em 1em; padding: 0px; border: 0px currentcolor; border-image-source: none; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="padding: 3px; border: 3px solid rgb(140, 138, 138); border-image: none; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="margin: 0px; padding: 10px; border: 1px solid rgb(128, 128, 128); border-image: none; text-align: center; color: rgb(5, 5, 5); line-height: 1.4; font-family: inherit; font-size: 1.2em; font-weight: inherit; text-decoration: inherit; -ms-word-break: break-all; -ms-word-wrap: break-word; box-sizing: border-box;"><span style="font-size: 16px;">详情<span style="line-height: 25.2px; font-size: 18px;">丨Details</span></span><section class="tn-Powered-by-XIUMI" style="margin-bottom: 0.2em; box-sizing: border-box;"></section></section></section></fieldset><span style="color: rgb(102, 102, 102); line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;▼</span><span style="font-size: 14px;"><span style="color: rgb(89, 89, 89); line-height: 28px; font-family: arial, helvetica, sans-serif; background-color: rgb(254, 254, 254);"><span style="color: rgb(102, 102, 102); line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; background-color: rgb(255, 255, 255);">签到，熟悉环境</span>（15mins）</span><strong><span style="color: rgb(192, 0, 0); line-height: 28px; font-family: arial, helvetica, sans-serif; background-color: rgb(254, 254, 254);"><br></span></strong></span></fieldset><p style="line-height: 1.75em; white-space: normal;"><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; background-color: rgb(254, 254, 254);"><span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; color: rgb(102, 102, 102); line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;▼</span><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; color: rgb(89, 89, 89); background-color: rgb(254, 254, 254);">课前准备（15mins）</span></span></p><p style="line-height: 1.75em; white-space: normal;"><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; background-color: rgb(254, 254, 254);"><span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; color: rgb(102, 102, 102); line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;▼</span><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; color: rgb(89, 89, 89); background-color: rgb(254, 254, 254);">瑜伽课程（50mins）</span></span></p><p style="line-height: 1.75em; white-space: normal;"><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; background-color: rgb(254, 254, 254);"><span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; color: rgb(102, 102, 102); line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;▼</span><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; color: rgb(89, 89, 89); background-color: rgb(254, 254, 254);">课后休息（10mins）</span></span></p><p style="line-height: 1.75em; white-space: normal;"><span style="font-family: arial, helvetica, sans-serif; font-size: 14px; background-color: rgb(254, 254, 254);"><span style="font-family: arial, helvetica, sans-serif; font-size: 18px; background-color: rgb(254, 254, 254);">&nbsp; &nbsp; &nbsp;<span style="font-family: arial, helvetica, sans-serif; font-size: 18px; color: rgb(89, 89, 89); background-color: rgb(254, 254, 254);">●</span></span><span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; color: rgb(102, 102, 102); line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp;<span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 14px; color: rgb(102, 102, 102); line-height: 32px; background-color: rgb(255, 255, 255);">一个半小时的哈他瑜伽初级课程体验</span></span></span></p><p style="line-height: 1.75em; white-space: normal;"><span style="font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; color: rgb(102, 102, 102); line-height: 32px; font-size: 14px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p style="line-height: 1.75em; white-space: normal;"><span style="color: rgb(102, 102, 102); line-height: 32px; font-family: arial, tahoma, &quot;Microsoft Yahei&quot;, 宋体, sans-serif; font-size: 15px; background-color: rgb(255, 255, 255);"></span></p><fieldset class="tn-Powered-by-XIUMI" style="margin: 0.8em 1em; padding: 0px; border: 0px currentcolor; border-image-source: none; text-align: justify; white-space: normal; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="padding: 3px; border: 3px solid rgb(140, 138, 138); border-image: none; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="margin: 0px; padding: 10px; border: 1px solid rgb(128, 128, 128); border-image: none; text-align: center; color: rgb(5, 5, 5); line-height: 1.4; font-family: inherit; font-size: 1.2em; font-weight: inherit; text-decoration: inherit; -ms-word-break: break-all; -ms-word-wrap: break-word; box-sizing: border-box;"><span style="font-size: 16px;">活动须知<span style="line-height: 25.2px; font-size: 18px;">丨Attention</span></span><section class="tn-Powered-by-XIUMI" style="margin-bottom: 0.2em; box-sizing: border-box;"></section></section></section></fieldset><p style="white-space: normal;"><span style="line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; </span><span style="color: rgb(89, 89, 89);"><span style="line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; background-color: rgb(255, 255, 255);">&nbsp;</span><span style="color: rgb(89, 89, 89); line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; background-color: rgb(255, 255, 255);">·&nbsp;</span>活动时间：13：30-15：00&nbsp;</span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(89, 89, 89); font-family: arial, helvetica, sans-serif; line-height: 28px; font-size: 18px;">&nbsp; &nbsp; </span><span style="color: rgb(89, 89, 89); font-family: arial, helvetica, sans-serif; line-height: 28px; background-color: rgb(254, 254, 254);">·&nbsp;</span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">地点：徐汇区辛耕路88号靠近天钥桥路</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(89, 89, 89); font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; line-height: 32px; text-align: center; font-size: 15px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">参与人数：25人</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-size: 15px; line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">请在活动开始前十五分钟入场</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-size: 15px; line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">体验过程请带好宽松舒适的衣服</span></span></p><p><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-family: 宋体, SimSun; font-size: 14px;">课前一小时保持五分饱的空腹并饮水适量</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-family: 宋体, SimSun; font-size: 14px;">若需洗浴，馆内提供免费服务</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; font-size: 15px; line-height: 32px; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-family: 宋体, SimSun; font-size: 14px;">瑜伽运动后30分钟内不宜洗澡，此时人体</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(89, 89, 89); font-family: 宋体; font-size: 14px; line-height: 21px;">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">毛孔处于打开状态，如遇冷水可能会造成</span></span></p><p style="line-height: 1.5em;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(89, 89, 89); font-family: 宋体; font-size: 14px; line-height: 21px;">&nbsp; &nbsp; &nbsp; &nbsp; </span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">身体不适</span></span></p><p style="white-space: normal;"><span style="color: rgb(89, 89, 89);"><span style="color: rgb(102, 102, 102); font-size: 15px; line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); font-size: 14px; font-family: 宋体, SimSun;">温馨提示一人一票，请勿带小孩</span></span></p><p style="white-space: normal;"><span style="color: rgb(89, 89, 89);"><span style="font-size: 15px; color: rgb(102, 102, 102); line-height: 32px; font-family: arial, tahoma, 'Microsoft Yahei', 宋体, sans-serif; background-color: rgb(255, 255, 255);">&nbsp; &nbsp; &nbsp;·&nbsp;</span><span style="color: rgb(89, 89, 89); line-height: 16px; font-size: 14px; font-family: 宋体, SimSun;">本产品不支持退款</span><span style="color: rgb(89, 89, 89); line-height: 16px; font-size: 14px;">&nbsp; &nbsp;</span><span style="color: rgb(89, 89, 89); line-height: 16px;"> </span></span></p><p><br></p>
+
+        <div class="intent_space"></div>
+    </div>
+
+
+
+</body>
+</html>
