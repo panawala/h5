@@ -21,7 +21,7 @@ var paths = {
         'static/js/gmu/widget/slider/dots.js',
         'static/js/gmu/widget/slider/$touch.js',
         'static/js/gmu/widget/slider/$autoplay.js',
-        'static/js/gmu/widget/slider/$layloadimg.js'
+        'static/js/gmu/widget/slider/$lazyloadimg.js'
     ],
     gmu_css: [
         'static/css/gmu/reset.css',
@@ -61,7 +61,7 @@ gulp.task('gmu-scripts', ['clean'], function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     return gulp.src(paths.gmu_scripts)
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(concat('gmu-slider.min.js'))
         .pipe(gulp.dest('build/js'));
 });
