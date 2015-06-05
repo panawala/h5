@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>创建一个固定价格的酒店</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://m.xmonster.cn/static/m-build/css/go-reason.css?v=285b93b0a39c0dd1c990878a05899243">
+    <link rel="stylesheet" type="text/css" href="build/css/gmu-slider.min.css">
+    <style type="text/css">
+        html, body{
+            margin: 0;
+            padding: 0;
+            background-color: #F8F8F8;
+        }
+        .clearfix { *zoom: 1;}
+        .clearfix:after{ content: ""; display: block; height: 0; visibility:hidden; clear: both;}
+
+        .container{
+            padding: 10px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #FFF;
+        }
+
+        .mb5{
+            margin-bottom: 5px;
+        }
+
+        .banner{
+            margin-bottom: -5px;
+        }
+        .banner img{
+            width: 100%;
+        }
+        .title .title-name{
+            color: #333333;
+            font-size: 18px;
+            padding: 2px 0;
+        }
+        .title .time-address{
+            color: #9B9B9B;
+            font-size: 12px;
+        }
+        .price{
+            position: relative;
+        }
+        .price .text{
+            height: 30px;
+            line-height: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .price .sub-text{
+            font-size: 0.1em;
+        }
+        .price .action{
+            display: inline-block;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border: 1px #D94648 solid;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            color: #D94648;
+            text-decoration: none;
+            padding: 0 15px;
+            font-size: 0.9em;
+            height: 30px;
+            line-height: 30px;
+            width: 75px;
+            text-align: center;
+        }
+        .icon-size-pos{
+            position: absolute;
+            top: 50%;
+        }
+        .tip-item{
+            padding-left: 45px;
+            padding-right: 45px;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tip-item a:link,a:visited,a:hover,a:active{
+            text-decoration: none;
+        }
+        .left-icon{
+            left: 10px;
+            width: 26px;
+            height: 26px;
+            margin-top: -13px;
+        }
+        .right-icon{
+            right: 10px;
+            width: 5px;
+            height: 8px;
+            margin-top: -4px;
+        }
+        .icon-text{
+            font-size: 12px;
+            color: #333333;
+        }
+
+        .pt0{
+            padding-top: 0;
+        }
+        .pr{
+            position: relative;
+        }
+        .pr .avatar{
+            width: 50px;
+            height: 50px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-border-radius: 25px;
+            -moz-border-radius: 25px;
+            border-radius: 25px;
+            position: absolute;
+            top: 10px;
+        }
+        .pr .comment{
+            margin-left: 60px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border-top: 1px #D2D2D2 solid;
+            margin-right: -10px;
+            padding-right: 10px;
+        }
+        .comment .name{
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+        .comment .content{
+            font-size: 12px;
+            color: #5A5A5A;
+        }
+        .max-3-lines{
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .comment-images{
+            width: 240px;
+            margin-top: 5px;
+        }
+        .comment-images img{
+            width: 60px;
+            height: 60px;
+            margin-top: 2px;
+            margin-right: 5px;
+        }
+        .bottom-info{
+        }
+        .bottom-info .time{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: left;
+        }
+        .bottom-info .tag{
+            font-size: 10px;
+            font-weight: bold;
+            color: #D94648;
+            float: left;
+            margin-left: 5px;
+        }
+        .bottom-info .like-image{
+            width: 13px;
+            height: 13px;
+            float: right;
+            margin-right: 2px;
+        }
+        .bottom-info .like{
+            font-size: 10px;
+            color: #9B9B9B;
+            float: right;
+        }
+    </style>
+    <!--<script type="text/javascript" src="static/js/vendor/zepto.min.js"></script>-->
+    <!--<script type="text/javascript" src="static/js/vendor/zepto.js"></script>-->
+    <!--<script type="text/javascript" src="build/js/gmu-slider.min.js"></script>-->
+    <script type="text/javascript" src="static/js/vendor/zepto.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/touch.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/matchMedia.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/event.ortchange.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/parseTpl.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/gmu.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/event.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/widget.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/slider.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/dots.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$touch.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$autoplay.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$lazyloadimg.js"></script>
+
+</head>
+<body>
+
+
+    <div id="slider">
+        <div>
+            <a href="javascript:void(0);"><img lazyload="/h5/static/images/image1.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image2.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image3.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image4.png"></a>
+        </div>
+    </div>
+    <script>
+        //创建slider组件
+        var slider = new gmu.Slider($('#slider'), { imgZoom: false });
+        //    $('#slider').slider( { imgZoom: false });
+    </script>
+
+
+</body>
+</html>

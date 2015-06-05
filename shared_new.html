@@ -5,6 +5,7 @@
     <title>创建一个固定价格的酒店</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://m.xmonster.cn/static/m-build/css/go-reason.css?v=285b93b0a39c0dd1c990878a05899243">
+    <link rel="stylesheet" type="text/css" href="build/css/gmu-slider.min.css">
     <style type="text/css">
         html, body{
             margin: 0;
@@ -182,12 +183,43 @@
             float: right;
         }
     </style>
+    <!--<script type="text/javascript" src="static/js/vendor/zepto.min.js"></script>-->
+    <!--<script type="text/javascript" src="static/js/vendor/zepto.js"></script>-->
+    <!--<script type="text/javascript" src="build/js/gmu-slider.min.js"></script>-->
+    <script type="text/javascript" src="static/js/vendor/zepto.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/touch.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/matchMedia.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/event.ortchange.js"></script>
+    <script type="text/javascript" src="static/js/gmu/extend/parseTpl.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/gmu.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/event.js"></script>
+    <script type="text/javascript" src="static/js/gmu/core/widget.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/slider.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/dots.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$touch.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$autoplay.js"></script>
+    <script type="text/javascript" src="static/js/gmu/widget/slider/$lazyloadimg.js"></script>
+
 
 </head>
 <body>
-    <div class="banner">
-        <img class="banner" src="http://7tszlo.com1.z0.glb.clouddn.com/6c8e2f64-036e-11e5-bbe9-00163e002e64.jpg" />
+<div id="slider">
+    <div>
+        <a href="javascript:void(0);"><img lazyload="/h5/static/images/image1.png"></a>
     </div>
+    <div>
+        <a href="javascript:void(0);"><img lazyload="static/images/image2.png"></a>
+    </div>
+    <div>
+        <a href="javascript:void(0);"><img lazyload="static/images/image3.png"></a>
+    </div>
+    <div>
+        <a href="javascript:void(0);"><img lazyload="static/images/image4.png"></a>
+    </div>
+</div>
+    <!--<div class="banner">-->
+        <!--<img class="banner" src="http://7tszlo.com1.z0.glb.clouddn.com/6c8e2f64-036e-11e5-bbe9-00163e002e64.jpg" />-->
+    <!--</div>-->
     <div class="title container mb5">
         <div class="title-name">珞迦瑜伽】体验纯粹瑜伽精神</div>
         <div class="time-address">珞迦瑜伽·05月30日 13:30-15:00</div>
@@ -264,6 +296,11 @@
     </div>
 
 
+    <script>
+        //创建slider组件
+        var slider = new gmu.Slider($('#slider'), { imgZoom: false });
+        //    $('#slider').slider( { imgZoom: false });
+    </script>
 
 </body>
 </html>

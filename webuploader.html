@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>webuploader 上传文件</title>
+    <!--引入CSS-->
+    <link rel="stylesheet" type="text/css" href="static/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/vendor/webuploader.css">
+
+    <!--引入JS-->
+    <script type="text/javascript" src="static/js/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/vendor/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/vendor/webuploader.html5only.min.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div id="thumbnail-list" class="row">
+    </div>
+</div>
+
+
+
+<!--dom结构部分-->
+<div id="uploader-demo">
+    <!--用来存放item-->
+    <div id="fileList" class="uploader-list"></div>
+    <div id="filePicker">选择图片</div>
+</div>
+
+<script type="text/javascript">
+    // 初始化Web Uploader
+    var remove_image = function(that){
+        $(that).parent().remove();
+    };
+    var uploader = WebUploader.create({
+        auto: true,
+        server: 'http://localhost:3000/api/photos',
+        pick: '#filePicker',
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        },
+        fileSingleSizeLimit: 200 * 1024
+    });
+
+    uploader.on('uploadBeforeSend', function(obj, data, header){
+        console.log(data);
+        data.hello = 'world';
+    });
+
+    // 文件上传失败，显示上传出错。
+    uploader.on('uploadError', function( file ) {
+        alert('上传失败' + file.name);
+    });
+
+    uploader.on('error', function(type){
+        if(type == 'F_EXCEED_SIZE'){
+            alert('文件大小超过200K');
+        }
+        console.log(type);
+    });
+
+    uploader.on('uploadAccept', function(obj, ret){
+        console.log(obj);
+        var img_item = '<div class="col-xs-6 col-md-3">' +
+                       '    <img src="' + ret.file_url + '" style="height: 180px; width: 100%; display: block;" alt="ret">' +
+                       '    <input name="cover_image" value="' + ret.file_url + '" type="hidden" />' +
+                       '    <a href="javascript:void(0);" onclick="remove_image(this)">删除</a>' +
+                       '</div>';
+        $('#thumbnail-list').append(img_item);
+        console.log(ret);
+    });
+</script>
+
+</body>
+</html>
