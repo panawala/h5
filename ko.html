@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="knockout-3.3.0.js"></script>
+</head>
+<body>
+<h2>Your seat reservations</h2>
+
+<table>
+    <thead><tr>
+        <th>Passenger name</th><th>Meal</th><th>Surcharge</th><th></th>
+    </tr></thead>
+    <tbody data-bind="foreach: seats">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: meal.mealName"></td>
+        <td data-bind="text: meal.price"></td>
+    </tr>
+    </tbody>
+</table>
+
+<ul data-bind="foreach: seats">
+    <li>
+        <input data-bind="value: name">
+        <input data-bind="value: meal.mealName">
+        <input data-bind="value: meal.price">
+        <ul data-bind="foreach: meal.names">
+            <li>
+                <input data-bind="value: name" type="text"/>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+<input type="button" value="show" onclick="show()">
+<input type="button" value="show2" onclick="show1()">
+
+
+<script>
+
+
+    var Item = function(name){
+        var self = this;
+        self.name = ko.observable(name);
+    };
+
+    var Meal = function(meal){
+        var self = this;
+        self.mealName = meal.mealName;
+        self.price = meal.price;
+        self.names = [
+            new Item('name1'),
+            new Item('name2'),
+            new Item('name3')
+        ];
+    };
+
+    // Class to represent a row in the seat reservations grid
+    function SeatReservation(name, initialMeal) {
+        var self = this;
+        self.name = name;
+//        self.meal = ko.observable(initialMeal);
+        self.meal = initialMeal;
+    }
+
+    // Overall viewmodel for this screen, along with initial state
+    function ReservationsViewModel() {
+        var self = this;
+
+        // Non-editable catalog data - would come from the server
+        self.availableMeals = [
+            new Meal({ mealName: "Standard (sandwich)", price: 0 }),
+            new Meal({ mealName: "Premium (lobster)", price: 34.95 }),
+            new Meal({ mealName: "Ultimate (whole zebra)", price: 290 })
+        ];
+
+        // Editable data
+        self.seats = ko.observableArray([
+            new SeatReservation("Steve", self.availableMeals[1]),
+            new SeatReservation("Bert", self.availableMeals[0])
+        ]);
+    }
+
+    var viewModel = new ReservationsViewModel();
+    ko.applyBindings(viewModel);
+
+    var show = function(){
+        console.log(ko.toJSON(viewModel));
+    };
+    var show1 = function(){
+        viewModel.seats()[0].meal.names[0].name("this is name1");
+        console.log(ko.toJSON(viewModel));
+    };
+
+</script>
+</body>
+</html>
+
