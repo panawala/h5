@@ -24,6 +24,14 @@
 <script src="http://m.damai.cn/vendor/zepto/touch.js"></script>
 <script type="application/javascript">
 
+    // 	0：空，1：可售，2：锁定，3：选中（网页用）
+    var seat_states = [
+        {state: false, color: 'ffffff', image: 0},
+        {state: true, color: 'ff0000', image: 1},
+        {state: false, color: 'ff0000', image: 2},
+        {state: true, color: 'ff0000', image: 3}
+    ];
+
     (function () {
         var root = this;
         var TouchCanvas = function (options) {
@@ -93,13 +101,11 @@
                         canvasContext.fillStyle = ColorStrtoRGB(area.color);
                     }
                 }else{
-//                    canvasContext.drawImage(image_list[area.img_id], area.points[0].x, area.points[0].y, 20, 20);
                     var pos_x = area.points[0].x;
                     var pos_y = area.points[0].y;
                     var width = 20;
                     var height = 20;
                     canvasContext.clearRect(pos_x, pos_y, width, height);
-//                    canvasContext.fillStyle = "#" + area.color;
                     canvasContext.fillStyle = ColorStrtoRGB(area.color);
                     canvasContext.fillRect(pos_x, pos_y, width, height);
                     canvasContext.drawImage(image_list[area.img_id], area.points[0].x, area.points[0].y, 20, 20);
@@ -285,19 +291,20 @@
                         if (selected_item != null) {
                             var new_item = this.select_index_callback(selected_item);
                             if(new_item){
-                                this.area_list[selected_index] = new_item;
-                                this.offContext.beginPath();
-
-                                var points = new_item.points;
-                                var pos_x = points[0].x;
-                                var pos_y = points[0].y;
-                                var width = 20;
-                                var height = 20;
-                                this.offContext.clearRect(pos_x, pos_y, width, height);
-                                this.offContext.fillStyle = ColorStrtoRGB(new_item.color);
-                                this.offContext.fillRect(pos_x, pos_y, width, height);
-                                this.offContext.drawImage(this.image_list[new_item.img_id], points[0].x, points[0].y, width, height);
-                                this.offContext.closePath();
+                                if(selected_item.img_id > -1) {
+                                    this.area_list[selected_index] = new_item;
+                                    this.offContext.beginPath();
+                                    var points = new_item.points;
+                                    var pos_x = points[0].x;
+                                    var pos_y = points[0].y;
+                                    var width = 20;
+                                    var height = 20;
+                                    this.offContext.clearRect(pos_x, pos_y, width, height);
+                                    this.offContext.fillStyle = ColorStrtoRGB(new_item.color);
+                                    this.offContext.fillRect(pos_x, pos_y, width, height);
+                                    this.offContext.drawImage(this.image_list[new_item.img_id], points[0].x, points[0].y, width, height);
+                                    this.offContext.closePath();
+                                }
                             }
                         }
                     }
@@ -383,13 +390,19 @@
         return 'rgba(' + parseInt(r, 16).toString(10) + "," + parseInt(g, 16).toString(10) + "," + parseInt(b, 16).toString(10) + ",0.55)";
     };
 
-    var loadData = function(jsonData, canvasObj, wrapDiv){
+    var load_canvas_data = function(canvas_dom_id, bg_img, image_list, area_list, select_index_callback){
+        if (touchCanvas) {
+            //销毁对象
+            if (touchCanvas.area_list) {
+                touchCanvas.area_list = null;
+            }
+            win.cancelAnimationFrame(touchCanvas.animate());
+            touchCanvas = null;
+        }
+
         //初始化loading效果
-        var canvas = document.getElementById(canvasObj);
+        var canvas = document.getElementById(canvas_dom_id);
         var context = canvas.getContext('2d');
-//        var $wrap = $('#' + wrapDiv);
-//        var w = canvas.width = $wrap.width();
-//        var h = canvas.height = $wrap.height();
         var w = canvas.width = 500*2;
         var h = canvas.height = 603*2;
         var load = function (image) {
@@ -405,62 +418,6 @@
         };
         li.src = "http://dui.dmcdn.cn/damai_v2/common/img/logo.png";
 
-        var areas = jsonData['msq'];
-        var boxMaxWidth = 0;
-        var boxMaxHeight = 0;
-        var area_list = [];
-        for (var i = 0, ai = areas.length; i < ai; i++) {
-            var area = areas[i];
-            var points = area["pis"].split("|");
-            var pos = [];
-            for (var r = 0, ar = points.length; r < ar; r++) // 遍历画图闭合线坐标
-            {
-                var point = points[r].split(","); // 拆分点标
-                var x = point[0] | 0;
-                var y = point[1] | 0;
-                boxMaxWidth = x > boxMaxWidth ? x : boxMaxWidth;
-                boxMaxHeight = y > boxMaxHeight ? y : boxMaxHeight;
-                pos.push({ x: x, y: y });
-            }
-            area_list.push({
-                color: area.c,
-                state: area.s != 2,
-                points: pos,
-                img_id: -1
-            });
-        }
-        touchCanvas = new TouchCanvas({
-            canvas: document.getElementById(canvasObj),
-            width: w,
-            height: h,
-            boxMaxWidth: boxMaxWidth,
-            boxMaxHeight: boxMaxHeight,
-            area_list: area_list,
-            bg_img: jsonData.seatimg,
-            select_index_callback: function(item){
-                enter_seat(item);
-            }
-        });
-    };
-
-    var bindData = function (canvasObj, wrapDiv) {
-        if (touchCanvas) {
-            //销毁对象
-            if (touchCanvas.area_list) {
-                touchCanvas.area_list = null;
-            }
-            win.cancelAnimationFrame(touchCanvas.animate());
-            touchCanvas = null;
-        }
-
-        jsonData = {"t":null,"cid":872,"ver":7,"pid":8530247,"msq":[{"c":"F91616","n":"A","i":"489929","s":"1","pis":"185,96|158,105|154,134|142,161|125,181|124,210|126,248|123,304|216,295|305,294|375,305|371,257|373,213|373,182|356,161|344,136|340,107|311,94","j":"93982,93983,94217","u":"cid=872&id=81044&kid=489929&limit=6&orderid=0&pid=8530247&ver=7&_m=5b7040bea2661751e63d61f94b45eace"},{"c":"80FF80","n":"B","i":"489930","s":"2","pis":"376,55|359,80|353,99|353,122|362,148|367,163|381,172|424,120|407,96|389,72","j":"94217","u":"cid=872&id=81044&kid=489930&limit=6&orderid=0&pid=8530247&ver=7&_m=570f5676b33ee9f200470998ca3a711e"},{"c":"EEB31B","n":"C","i":"489931","s":"1","pis":"436,142|409,171|390,205|380,236|380,271|391,318|394,344|398,373|407,386|442,367|470,351|491,329|465,257|459,204|463,169","j":"93984,94217","u":"cid=872&id=81044&kid=489931&limit=6&orderid=0&pid=8530247&ver=7&_m=1985121536ad90d04a49cc4b0d98ba2b"},{"c":"80FF80","n":"D","i":"489932","s":"2","pis":"463,368|436,383|414,406|401,426|388,445|375,472|361,499|358,517|386,530|401,525|436,493|453,463|460,437|464,402","j":"94217","u":"cid=872&id=81044&kid=489932&limit=6&orderid=0&pid=8530247&ver=7&_m=86cbe7e0748fbbcbd1da5ace212610dd"},{"c":"80FF80","n":"E","i":"489933","s":"2","pis":"171,491|172,523|184,539|154,552|162,570|182,581|209,562|219,555|254,558|286,555|314,582|339,570|349,552|322,543|334,525|336,492|262,491","j":"94217","u":"cid=872&id=81044&kid=489933&limit=6&orderid=0&pid=8530247&ver=7&_m=3abc7482cf97b892da3a0fcfb1e18c14"},{"c":"EEB31B","n":"F","i":"489934","s":"1","pis":"110,445|95,428|83,406|72,396|62,381|53,375|35,366|31,404|37,440|47,467|61,494|98,527|118,530|135,522|143,513|138,500|126,475","j":"93984,94217","u":"cid=872&id=81044&kid=489934&limit=6&orderid=0&pid=8530247&ver=7&_m=20b203a28782e0f2beff01530e9c48db"},{"c":"355fac","n":"G","i":"489935","s":"1","pis":"107,319|116,289|115,260|115,226|105,194|87,172|64,142|36,166|40,204|44,237|33,256|15,289|5,330|26,354|53,365|87,387|97,369|105,345","j":"93984,93987,94217","u":"cid=872&id=81044&kid=489935&limit=6&orderid=0&pid=8530247&ver=7&_m=2dfc0fd0a7eb80db0d42dc09bd0fb675"},{"c":"80FF80","n":"H","i":"489936","s":"2","pis":"144,133|147,109|141,81|125,54|114,59|91,99|76,119|116,170|133,161|138,148","j":"94217","u":"cid=872&id=81044&kid=489936&limit=6&orderid=0&pid=8530247&ver=7&_m=77cf5222c1e9cfe568c3a25328bf9bd3"},{"c":"80FF80","n":"I","i":"489937","s":"2","pis":"211,15|203,26|174,33|183,77|250,75|317,77|325,34|291,25|284,16|250,13","j":"94217","u":"cid=872&id=81044&kid=489937&limit=6&orderid=0&pid=8530247&ver=7&_m=e9a9831f7d28e9a5dfbe6861b2c10cb7"}],"seatimg":"http://sseat.damai.cn/Resources/xuanzuo/StandImage/872/8530247/performbg.jpg","lc":[{"p":"580","c":"F91616"},{"p":"380","c":"EF8686"},{"p":"280","c":"355fac"},{"p":"180","c":"EEB31B"},{"p":"120","c":"8ac4e3"},{"p":"80","c":"bf6aa2"}],"p":{"i":8530247,"isxz":true,"l":[{"buyNowSum":20,"i":10764438,"n":"80","p":80,"s":1,"t":false},{"buyNowSum":20,"i":10764437,"n":"120","p":120,"s":1,"t":false},{"buyNowSum":20,"i":10764436,"n":"180","p":180,"s":0,"t":false},{"buyNowSum":20,"i":10778314,"n":"280","p":280,"s":0,"t":false},{"buyNowSum":20,"i":10764435,"n":"380","p":380,"s":0,"t":false},{"buyNowSum":20,"i":10764434,"n":"580","p":580,"s":0,"t":false}],"lsum":20,"n":"2015-12-12 周六 19:30","sum":6,"t":"2015-12-12T11:30:00Z","timetemp":"2015-12-12 19:30:00","u":null}};
-        loadData(jsonData, canvasObj, wrapDiv);
-    };
-
-//    bindData("onlineSeatZone", "canvasDiv");
-
-    var loadSeatData = function(canvasObj, image_list, area_list){
-        //初始化loading效果
 
         var width = 500*2;
         var height = 603*2;
@@ -475,30 +432,57 @@
             boxMaxHeight = y > boxMaxHeight ? y : boxMaxHeight;
         }
         touchCanvas = new TouchCanvas({
-            canvas: document.getElementById(canvasObj),
+            canvas: document.getElementById(canvas_dom_id),
             width: width,
             height: height,
             boxMaxWidth: boxMaxWidth,
             boxMaxHeight: boxMaxHeight,
             area_list: area_list,
             image_list: image_list,
-            select_index_callback: function(item){
-                item.color = 'ff0000';
+            bg_img: bg_img,
+            select_index_callback: select_index_callback
+        });
+    };
+
+    var load_seat_data = function(canvas_dom_id, image_list, area_list){
+        load_canvas_data(canvas_dom_id, undefined, image_list, area_list, function(item){
+            var select_state = seat_states[3];
+            if(item.img_id == 3) {
+                select_state = seat_states[1];
+                item.state = select_state.state;
+                item.img_id = select_state.image;
+                item.color = select_state.color;
                 console.log(item);
                 return item
             }
+            item.state = select_state.state;
+            item.img_id = select_state.image;
+            item.color = select_state.color;
+            console.log(item);
+            return item;
         });
     };
+
+    var load_area_data = function(canvas_dom_id, area_list, bg_img){
+        load_canvas_data(canvas_dom_id, bg_img, [], area_list, function(item){
+            enter_area(item);
+        });
+    };
+
 
     var get_area_list = function() {
         var id = 1;
         var area_list = [];
-        var color_table = ['0000ff', 'ff0000', '00ff00'];
+
+        // 	0：空，1：可售，2：锁定，3：选中（网页用）
         for (var i = 0; i < 50; i++) {
             for (var j = 0; j < 10; j++) {
+                var seat_state = seat_states[(i*j) % 4];
                 var area ={};
                 area['id'] = id++;
-                area['state'] = true;
+                area['state'] = seat_state.state;
+                area['img_id'] = seat_state.image;
+                area['color'] = seat_state.color;
                 area['points'] = [
                     {'x':i * 25,      'y': j * 25},
                     {'x':i * 25 + 20, 'y': j * 25},
@@ -506,9 +490,6 @@
                     {'x':i * 25,      'y': j * 25 + 20}
                 ];
 
-                area['img_id'] = (i+j) % 4;
-//                area['img_id'] = -1;
-                area['color'] = color_table[(i+j)%3];
                 area_list.push(area);
             }
         }
@@ -516,7 +497,7 @@
     };
 
 
-    function loadImages(sources, callback) {
+    var load_images = function(sources, callback) {
         var image_list = [];
         for (var i = 0; i < sources.length; i++){
             image_list.push(0);
@@ -551,22 +532,43 @@
         });
     }
 
-    function enter_seat(area){
+    var enter_area = function(area){
         var area_list = get_area_list(area);
-        //0:背景, 1:套票, 2:选中, 3:售完, 4:锁定票
-        loadImages([
+        //0:背景, 1:可售, 2:锁定, 3:选中, 4:套票
+        load_images([
             'http://m.damai.cn/images/seat/bg.png',
-            'http://m.damai.cn/images/seat/double.png',
-            'http://m.damai.cn/images/seat/selected.png',
-            'http://m.damai.cn/images/seat/double.png',
             'http://m.damai.cn/images/seat/sold.png',
-            'http://m.damai.cn/images/seat/seat_lock@3x.png'
+            'http://m.damai.cn/images/seat/seat_lock@3x.png',
+            'http://m.damai.cn/images/seat/selected.png',
+            'http://m.damai.cn/images/seat/double.png'
         ], function(image_list){
-            loadSeatData("onlineSeatZone", image_list, area_list);
+            load_seat_data("onlineSeatZone", image_list, area_list);
+        });
+    };
+
+    var jsonData = {"t":null,"cid":872,"ver":7,"pid":8530247,"msq":[{"c":"F91616","n":"A","i":"489929","s":"1","pis":"185,96|158,105|154,134|142,161|125,181|124,210|126,248|123,304|216,295|305,294|375,305|371,257|373,213|373,182|356,161|344,136|340,107|311,94","j":"93982,93983,94217","u":"cid=872&id=81044&kid=489929&limit=6&orderid=0&pid=8530247&ver=7&_m=5b7040bea2661751e63d61f94b45eace"},{"c":"80FF80","n":"B","i":"489930","s":"2","pis":"376,55|359,80|353,99|353,122|362,148|367,163|381,172|424,120|407,96|389,72","j":"94217","u":"cid=872&id=81044&kid=489930&limit=6&orderid=0&pid=8530247&ver=7&_m=570f5676b33ee9f200470998ca3a711e"},{"c":"EEB31B","n":"C","i":"489931","s":"1","pis":"436,142|409,171|390,205|380,236|380,271|391,318|394,344|398,373|407,386|442,367|470,351|491,329|465,257|459,204|463,169","j":"93984,94217","u":"cid=872&id=81044&kid=489931&limit=6&orderid=0&pid=8530247&ver=7&_m=1985121536ad90d04a49cc4b0d98ba2b"},{"c":"80FF80","n":"D","i":"489932","s":"2","pis":"463,368|436,383|414,406|401,426|388,445|375,472|361,499|358,517|386,530|401,525|436,493|453,463|460,437|464,402","j":"94217","u":"cid=872&id=81044&kid=489932&limit=6&orderid=0&pid=8530247&ver=7&_m=86cbe7e0748fbbcbd1da5ace212610dd"},{"c":"80FF80","n":"E","i":"489933","s":"2","pis":"171,491|172,523|184,539|154,552|162,570|182,581|209,562|219,555|254,558|286,555|314,582|339,570|349,552|322,543|334,525|336,492|262,491","j":"94217","u":"cid=872&id=81044&kid=489933&limit=6&orderid=0&pid=8530247&ver=7&_m=3abc7482cf97b892da3a0fcfb1e18c14"},{"c":"EEB31B","n":"F","i":"489934","s":"1","pis":"110,445|95,428|83,406|72,396|62,381|53,375|35,366|31,404|37,440|47,467|61,494|98,527|118,530|135,522|143,513|138,500|126,475","j":"93984,94217","u":"cid=872&id=81044&kid=489934&limit=6&orderid=0&pid=8530247&ver=7&_m=20b203a28782e0f2beff01530e9c48db"},{"c":"355fac","n":"G","i":"489935","s":"1","pis":"107,319|116,289|115,260|115,226|105,194|87,172|64,142|36,166|40,204|44,237|33,256|15,289|5,330|26,354|53,365|87,387|97,369|105,345","j":"93984,93987,94217","u":"cid=872&id=81044&kid=489935&limit=6&orderid=0&pid=8530247&ver=7&_m=2dfc0fd0a7eb80db0d42dc09bd0fb675"},{"c":"80FF80","n":"H","i":"489936","s":"2","pis":"144,133|147,109|141,81|125,54|114,59|91,99|76,119|116,170|133,161|138,148","j":"94217","u":"cid=872&id=81044&kid=489936&limit=6&orderid=0&pid=8530247&ver=7&_m=77cf5222c1e9cfe568c3a25328bf9bd3"},{"c":"80FF80","n":"I","i":"489937","s":"2","pis":"211,15|203,26|174,33|183,77|250,75|317,77|325,34|291,25|284,16|250,13","j":"94217","u":"cid=872&id=81044&kid=489937&limit=6&orderid=0&pid=8530247&ver=7&_m=e9a9831f7d28e9a5dfbe6861b2c10cb7"}],"seatimg":"http://sseat.damai.cn/Resources/xuanzuo/StandImage/872/8530247/performbg.jpg","lc":[{"p":"580","c":"F91616"},{"p":"380","c":"EF8686"},{"p":"280","c":"355fac"},{"p":"180","c":"EEB31B"},{"p":"120","c":"8ac4e3"},{"p":"80","c":"bf6aa2"}],"p":{"i":8530247,"isxz":true,"l":[{"buyNowSum":20,"i":10764438,"n":"80","p":80,"s":1,"t":false},{"buyNowSum":20,"i":10764437,"n":"120","p":120,"s":1,"t":false},{"buyNowSum":20,"i":10764436,"n":"180","p":180,"s":0,"t":false},{"buyNowSum":20,"i":10778314,"n":"280","p":280,"s":0,"t":false},{"buyNowSum":20,"i":10764435,"n":"380","p":380,"s":0,"t":false},{"buyNowSum":20,"i":10764434,"n":"580","p":580,"s":0,"t":false}],"lsum":20,"n":"2015-12-12 周六 19:30","sum":6,"t":"2015-12-12T11:30:00Z","timetemp":"2015-12-12 19:30:00","u":null}};
+    var areas = jsonData['msq'];
+    var area_list = [];
+    for (var i = 0, ai = areas.length; i < ai; i++) {
+        var area = areas[i];
+        var points = area["pis"].split("|");
+        var pos = [];
+        for (var r = 0, ar = points.length; r < ar; r++) // 遍历画图闭合线坐标
+        {
+            var point = points[r].split(","); // 拆分点标
+            var x = point[0] | 0;
+            var y = point[1] | 0;
+            pos.push({ x: x, y: y });
+        }
+        area_list.push({
+            color: area.c,
+            state: area.s != 2,
+            points: pos,
+            img_id: -1
         });
     }
+    load_area_data("onlineSeatZone", area_list, jsonData.seatimg);
 
-    enter_seat();
 
 </script>
 
