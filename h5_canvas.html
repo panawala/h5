@@ -26,10 +26,10 @@
 
     // 	0：空，1：可售，2：锁定，3：选中（网页用）
     var seat_states = [
-        {state: false, color: 'ffffff', image: 0},
-        {state: true, color: 'ff0000', image: 1},
-        {state: false, color: 'ff0000', image: 2},
-        {state: true, color: 'ff0000', image: 3}
+        {state: false, color: 'ffffff', img_id: 0},
+        {state: true, color: 'ff0000', img_id: 1},
+        {state: false, color: 'ff0000', img_id: 2},
+        {state: true, color: 'ff0000', img_id: 3}
     ];
 
     (function () {
@@ -450,15 +450,16 @@
             if(item.img_id == 3) {
                 select_state = seat_states[1];
                 item.state = select_state.state;
-                item.img_id = select_state.image;
+                item.img_id = select_state.img_id;
                 item.color = select_state.color;
                 console.log(item);
                 return item
             }
             item.state = select_state.state;
-            item.img_id = select_state.image;
+            item.img_id = select_state.img_id;
             item.color = select_state.color;
             console.log(item);
+            console.log(item.seat_row + '排' + item.seat_no + '座');
             return item;
         });
     };
@@ -496,6 +497,255 @@
         return area_list;
     };
 
+    var get_seat_list = function() {
+        var seat_info = {
+            seat_list: [
+//                {
+//                    "rownum": "1",
+//                    "rowid": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "2",
+//                    "rowid": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "3",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,LK@107@A,LK@102@A,LK@99@A,LK@94@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@5@A,ZL,LK@10@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "4",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,LK@106@A,ZL,LK@98@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@4@A,ZL,LK@9@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "5",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,LK@105@A,LK@101@A,LK@97@A,LK@93@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@3@A,ZL,LK@8@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "6",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,LK@104@A,ZL,LK@96@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@2@A,ZL,LK@7@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "7",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,LK@103@A,LK@100@A,LK@95@A,LK@92@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@1@A,ZL,LK@6@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "8",
+//                    "rowid": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "9",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@91@A,LK@83@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "10",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@90@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "11",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@89@A,LK@82@A,ZL,LK@48@A,ZL,ZL,LK@45@A,ZL,LK@44@A,ZL,ZL,LK@41@A,ZL,LK@40@A,ZL,ZL,LK@37@A,ZL,LK@36@A,ZL,ZL,LK@33@A,ZL,LK@32@A,ZL,ZL,LK@29@A,ZL,LK@28@A,ZL,ZL,LK@25@A,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "12",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@47@A,LK@46@A,ZL,ZL,ZL,LK@43@A,LK@42@A,ZL,ZL,ZL,LK@39@A,LK@38@A,ZL,ZL,ZL,LK@35@A,LK@34@A,ZL,ZL,ZL,LK@31@A,LK@30@A,ZL,ZL,ZL,LK@27@A,LK@26@A,ZL,ZL,LK@14@A,LK@18@A,LK@24@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "13",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@88@A,LK@81@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@23@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "14",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@87@A,ZL,ZL,LK@72@A,ZL,ZL,LK@69@A,ZL,LK@68@A,ZL,ZL,LK@65@A,ZL,LK@64@A,ZL,ZL,LK@61@A,ZL,LK@60@A,ZL,ZL,LK@57@A,ZL,LK@56@A,ZL,ZL,LK@53@A,ZL,LK@52@A,ZL,ZL,LK@49@A,ZL,LK@13@A,LK@17@A,LK@22@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "15",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@86@A,LK@80@A,ZL,ZL,LK@71@A,LK@70@A,ZL,ZL,ZL,LK@67@A,LK@66@A,ZL,ZL,ZL,LK@63@A,LK@62@A,ZL,ZL,ZL,LK@59@A,LK@58@A,ZL,ZL,ZL,LK@55@A,LK@54@A,ZL,ZL,ZL,LK@51@A,LK@50@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "16",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@85@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@12@A,LK@16@A,LK@21@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "17",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,LK@84@A,LK@79@A,ZL,ZL,ZL,ZL,ZL,ZL,LK@78@A,ZL,ZL,LK@77@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@76@A,LK@75@A,ZL,ZL,LK@74@A,LK@73@A,ZL,ZL,ZL,ZL,ZL,ZL,LK@20@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "18",
+//                    "rowid": "1",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@11@A,LK@15@A,LK@19@A,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "19",
+//                    "rowid": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "rownum": "20",
+//                    "rowid": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+
+
+                {
+                    "rownum": "1",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "2",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "3",
+                    "rowid": "加座1",
+                    "columns": "ZL,ZL,LK@29@C,LK@27@C,LK@25@C,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,ZL,ZL,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,ZL,ZL,ZL,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,LK@24@C,LK@26@C,ZL,ZL"
+                },
+                {
+                    "rownum": "4",
+                    "rowid": "立位",
+                    "columns": "ZL,ZL,LK@5@A,LK@3@A,LK@1@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@2@A,LK@4@A,ZL,ZL"
+                },
+                {
+                    "rownum": "5",
+                    "rowid": "立位",
+                    "columns": "ZL,ZL,LK@11@A,LK@9@A,LK@7@A,A@23@B,A@21@B,A@19@B,A@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,ZL,ZL,ZL,LK@12@B,LK@14@B,A@16@B,A@18@B,A@20@B,A@22@B,LK@6@A,LK@8@A,ZL,ZL"
+                },
+                {
+                    "rownum": "6",
+                    "rowid": "立位",
+                    "columns": "ZL,ZL,LK@17@A,LK@15@A,LK@13@A,A@23@B,A@21@B,A@19@B,LK@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,ZL,ZL,LK@14@B,LK@16@B,A@18@B,A@20@B,A@22@B,A@24@B,LK@10@A,LK@12@A,ZL,ZL"
+                },
+                {
+                    "rownum": "7",
+                    "rowid": "3",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "8",
+                    "rowid": "4",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "9",
+                    "rowid": "5",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "10",
+                    "rowid": "6",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "11",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "12",
+                    "rowid": "加座2",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,ZL,ZL,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,ZL,ZL,ZL,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "13",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "14",
+                    "rowid": "7",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "15",
+                    "rowid": "8",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "16",
+                    "rowid": "9",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "17",
+                    "rowid": "10",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "18",
+                    "rowid": "11",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "19",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "rownum": "20",
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                }
+
+
+            ],
+            "seat_type_dict": {
+                "A": {
+                    "color": '#FF0000',
+                    "price": "90",
+                    "maxbuy": 6,
+                    "disprice_list": []
+                }
+            }
+        };
+
+        var seat_list = seat_info.seat_list;
+        var area_list = [];
+        seat_list.forEach(function(seat_row){
+            var y_align = 20 + parseInt(seat_row.rownum) * 25;
+            var columns = seat_row.columns.split(",");
+            columns.forEach(function(column, column_idx){
+                var x_align = 20 + column_idx * 25;
+                var seat_state = 'N';
+                var seat_no = 0;
+                var seat_type = '';
+                if(column != 'ZL'){
+                    seat_state = column.split("@")[0];
+                    seat_no = column.split("@")[1];
+                    seat_type = column.split("@")[2];
+                }
+                // 	0：空，1：可售，2：锁定，3：选中（网页用）
+                var area = $.extend({}, seat_states[0]);
+                if(seat_state == 'A'){
+                    area = $.extend({}, seat_states[1]);
+                }else if (seat_state == 'LK'){
+                    area = $.extend({}, seat_states[2]);
+                }
+                area.seat_no = seat_no;
+                area.seat_type = seat_type;
+                area.seat_row = seat_row.rownum;
+                area.points = [{x: x_align, y: y_align},{x: x_align+20, y: y_align},{x: x_align+20, y: y_align+20},{x: x_align, y: y_align+20}];
+                area_list.push(area);
+            });
+        });
+        return area_list;
+    };
 
     var load_images = function(sources, callback) {
         var image_list = [];
@@ -530,10 +780,11 @@
                 alert('资源加载失败！')
             };
         });
-    }
+    };
 
     var enter_area = function(area){
-        var area_list = get_area_list(area);
+//        var area_list = get_area_list(area);
+        var area_list = get_seat_list(area);
         //0:背景, 1:可售, 2:锁定, 3:选中, 4:套票
         load_images([
             'http://m.damai.cn/images/seat/bg.png',
@@ -546,29 +797,56 @@
         });
     };
 
-    var jsonData = {"t":null,"cid":872,"ver":7,"pid":8530247,"msq":[{"c":"F91616","n":"A","i":"489929","s":"1","pis":"185,96|158,105|154,134|142,161|125,181|124,210|126,248|123,304|216,295|305,294|375,305|371,257|373,213|373,182|356,161|344,136|340,107|311,94","j":"93982,93983,94217","u":"cid=872&id=81044&kid=489929&limit=6&orderid=0&pid=8530247&ver=7&_m=5b7040bea2661751e63d61f94b45eace"},{"c":"80FF80","n":"B","i":"489930","s":"2","pis":"376,55|359,80|353,99|353,122|362,148|367,163|381,172|424,120|407,96|389,72","j":"94217","u":"cid=872&id=81044&kid=489930&limit=6&orderid=0&pid=8530247&ver=7&_m=570f5676b33ee9f200470998ca3a711e"},{"c":"EEB31B","n":"C","i":"489931","s":"1","pis":"436,142|409,171|390,205|380,236|380,271|391,318|394,344|398,373|407,386|442,367|470,351|491,329|465,257|459,204|463,169","j":"93984,94217","u":"cid=872&id=81044&kid=489931&limit=6&orderid=0&pid=8530247&ver=7&_m=1985121536ad90d04a49cc4b0d98ba2b"},{"c":"80FF80","n":"D","i":"489932","s":"2","pis":"463,368|436,383|414,406|401,426|388,445|375,472|361,499|358,517|386,530|401,525|436,493|453,463|460,437|464,402","j":"94217","u":"cid=872&id=81044&kid=489932&limit=6&orderid=0&pid=8530247&ver=7&_m=86cbe7e0748fbbcbd1da5ace212610dd"},{"c":"80FF80","n":"E","i":"489933","s":"2","pis":"171,491|172,523|184,539|154,552|162,570|182,581|209,562|219,555|254,558|286,555|314,582|339,570|349,552|322,543|334,525|336,492|262,491","j":"94217","u":"cid=872&id=81044&kid=489933&limit=6&orderid=0&pid=8530247&ver=7&_m=3abc7482cf97b892da3a0fcfb1e18c14"},{"c":"EEB31B","n":"F","i":"489934","s":"1","pis":"110,445|95,428|83,406|72,396|62,381|53,375|35,366|31,404|37,440|47,467|61,494|98,527|118,530|135,522|143,513|138,500|126,475","j":"93984,94217","u":"cid=872&id=81044&kid=489934&limit=6&orderid=0&pid=8530247&ver=7&_m=20b203a28782e0f2beff01530e9c48db"},{"c":"355fac","n":"G","i":"489935","s":"1","pis":"107,319|116,289|115,260|115,226|105,194|87,172|64,142|36,166|40,204|44,237|33,256|15,289|5,330|26,354|53,365|87,387|97,369|105,345","j":"93984,93987,94217","u":"cid=872&id=81044&kid=489935&limit=6&orderid=0&pid=8530247&ver=7&_m=2dfc0fd0a7eb80db0d42dc09bd0fb675"},{"c":"80FF80","n":"H","i":"489936","s":"2","pis":"144,133|147,109|141,81|125,54|114,59|91,99|76,119|116,170|133,161|138,148","j":"94217","u":"cid=872&id=81044&kid=489936&limit=6&orderid=0&pid=8530247&ver=7&_m=77cf5222c1e9cfe568c3a25328bf9bd3"},{"c":"80FF80","n":"I","i":"489937","s":"2","pis":"211,15|203,26|174,33|183,77|250,75|317,77|325,34|291,25|284,16|250,13","j":"94217","u":"cid=872&id=81044&kid=489937&limit=6&orderid=0&pid=8530247&ver=7&_m=e9a9831f7d28e9a5dfbe6861b2c10cb7"}],"seatimg":"http://sseat.damai.cn/Resources/xuanzuo/StandImage/872/8530247/performbg.jpg","lc":[{"p":"580","c":"F91616"},{"p":"380","c":"EF8686"},{"p":"280","c":"355fac"},{"p":"180","c":"EEB31B"},{"p":"120","c":"8ac4e3"},{"p":"80","c":"bf6aa2"}],"p":{"i":8530247,"isxz":true,"l":[{"buyNowSum":20,"i":10764438,"n":"80","p":80,"s":1,"t":false},{"buyNowSum":20,"i":10764437,"n":"120","p":120,"s":1,"t":false},{"buyNowSum":20,"i":10764436,"n":"180","p":180,"s":0,"t":false},{"buyNowSum":20,"i":10778314,"n":"280","p":280,"s":0,"t":false},{"buyNowSum":20,"i":10764435,"n":"380","p":380,"s":0,"t":false},{"buyNowSum":20,"i":10764434,"n":"580","p":580,"s":0,"t":false}],"lsum":20,"n":"2015-12-12 周六 19:30","sum":6,"t":"2015-12-12T11:30:00Z","timetemp":"2015-12-12 19:30:00","u":null}};
-    var areas = jsonData['msq'];
-    var area_list = [];
-    for (var i = 0, ai = areas.length; i < ai; i++) {
-        var area = areas[i];
-        var points = area["pis"].split("|");
-        var pos = [];
-        for (var r = 0, ar = points.length; r < ar; r++) // 遍历画图闭合线坐标
-        {
-            var point = points[r].split(","); // 拆分点标
-            var x = point[0] | 0;
-            var y = point[1] | 0;
-            pos.push({ x: x, y: y });
-        }
-        area_list.push({
-            color: area.c,
-            state: area.s != 2,
-            points: pos,
-            img_id: -1
-        });
-    }
-    load_area_data("onlineSeatZone", area_list, jsonData.seatimg);
+    var gen_play_info = function(){
+        var play_info = {
+            "extra": "{\"area_bg\": \"http://img6.gewara.com/images/theatre/theatreroom/201508/s_6d99d7ff_14f4ac6ae4d__7adf.jpg\"}",
+            "type": "seat",
+            "id": 38116658,
+            "desc": "2017-09-11 09:47:00"
+        };
 
+        var area_info = [{
+            "row_count": "20",
+            "hot_zone": "82,13 419,13 419,190 81,188",
+            "drama_id": "168323482",
+            "first_row": "1",
+            "id": 243351987,
+            "column_count": "41",
+            "first_column": "1"
+        },{
+            "row_count": "20",
+            "hot_zone": "76,261 423,264 424,465 73,465",
+            "drama_id": "168323482",
+            "first_row": "1",
+            "id": 243351988,
+            "column_count": "24",
+            "first_column": "1"
+        }];
+
+        var area_list = [];
+        area_info.forEach(function(area){
+            var points = [];
+            area.hot_zone.split(' ').forEach(function(point){
+                points.push({
+                    x: parseInt(point.split(',')[0]),
+                    y: parseInt(point.split(',')[1])
+                })
+            });
+            area_list.push({
+                color: 'FF0000',
+                state: true,
+                points: points,
+                img_id: -1
+            });
+        });
+
+        load_area_data("onlineSeatZone", area_list, JSON.parse(play_info.extra).area_bg);
+
+    };
+
+//    load_area_data("onlineSeatZone", area_list, jsonData.seatimg);
+
+    gen_play_info();
 
 </script>
 
