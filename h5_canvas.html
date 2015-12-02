@@ -476,30 +476,79 @@
         load_canvas_data(canvas_dom_id, undefined, image_list, area_list, function(item){
             var select_state = seat_states[3];
             if(item.img_id == 3) {
-                // cancel select
+                // 设置取消选中的颜色，背景等
                 select_state = seat_states[1];
                 item.state = select_state.state;
                 item.img_id = select_state.img_id;
                 item.color = select_state.color;
                 console.log(item);
+
+                // 从已选中座位列表中去除
                 var index = selected_seat_list.indexOf(item);
                 if(index > -1){
                     selected_seat_list.splice(index, 1);
                 }
+
+                // 从规则中去除
+                var seat_index = current_seat_type_list[item.seat_type].selected_seats.indexOf(item);
+                if(seat_index > -1){
+                    current_seat_type_list[item.seat_type].selected_seats.splice(seat_index, 1);
+                }
             }else{
-                // select
+                // 设置选中的颜色和背景
                 item.state = select_state.state;
                 item.img_id = select_state.img_id;
                 item.color = select_state.color;
                 console.log(item);
-                console.log(item.seat_row + '排' + item.seat_no + '座');
+                console.log(item.seat_row + '排' + item.seat_no + '座' + current_seat_type_list[item.seat_type].price + '元');
+
+                // 判断规则
+                if(current_seat_type_list[item.seat_type].selected_seats.length >= current_seat_type_list[item.seat_type].max_buy){
+                    alert('最多选' + current_seat_type_list[item.seat_type].max_buy + '个');
+                    return;
+                }
+
+                if(selected_seat_list.length >= current_max_buy){
+                    alert('最多选' + current_max_buy + '个');
+                    return;
+                }
+
+//                var item_copy = $.extend({}, item);
+                current_seat_type_list[item.seat_type].selected_seats.push(item);
+                // 加入已选列表
                 selected_seat_list.push(item);
             }
 
+            // 渲染已选中的html
             $('#selected_seat_list').empty();
+
+            var current_seat_price = parseInt(current_seat_type_list[item.seat_type].price);
+
+            var total_fee = 0;
+            var dis_seats_count = 0;
             selected_seat_list.forEach(function(seat){
-                $('#selected_seat_list').append('<li>' + seat.seat_row + '排' + seat.seat_no + '座' + '</li>')
+                total_fee += current_seat_price;
+                if(current_dis_price[seat.seat_type]){
+                    //如果含有套票
+                    dis_seats_count++;
+                }
+                $('#selected_seat_list').append('<li>' + seat.seat_row + '排' + seat.seat_no + '座'
+                + current_seat_type_list[seat.seat_type].price + '元</li>')
             });
+
+            if(current_dis_price[item.seat_type]) {
+                // 计算含有套票时的总价, 减去优惠价格
+                var dis_price_quantity = current_dis_price[item.seat_type].quantity;
+                var dis_price_price = current_dis_price[item.seat_type].price;
+                var can_dis_price_count = parseInt(dis_seats_count / dis_price_quantity);
+
+                console.log('discount_price_count', can_dis_price_count);
+                var total_with_dis_fee = parseInt(dis_price_price) * can_dis_price_count;
+                var total_without_dis_fee = can_dis_price_count * dis_price_quantity * current_seat_price;
+                total_fee -= (total_without_dis_fee - total_with_dis_fee);
+            }
+            // 设置总价
+            $('#selected_seat_list').append('<li>共' + total_fee + '元</li>');
 
             return item;
         });
@@ -511,150 +560,200 @@
         });
     };
 
-
-    var get_area_list = function() {
-        var id = 1;
-        var area_list = [];
-
-        // 	0：空，1：可售，2：锁定，3：选中（网页用）
-        for (var i = 0; i < 50; i++) {
-            for (var j = 0; j < 10; j++) {
-                var seat_state = seat_states[(i*j) % 4];
-                var area ={};
-                area['id'] = id++;
-                area['state'] = seat_state.state;
-                area['img_id'] = seat_state.image;
-                area['color'] = seat_state.color;
-                area['points'] = [
-                    {'x':i * 25,      'y': j * 25},
-                    {'x':i * 25 + 20, 'y': j * 25},
-                    {'x':i * 25 + 20, 'y': j * 25 + 20},
-                    {'x':i * 25,      'y': j * 25 + 20}
-                ];
-
-                area_list.push(area);
-            }
+    var current_seat_type_list = {};
+    var current_max_buy = 0;
+    // 当前选中的套票格式
+    var current_dis_price = {
+        "D": {
+            "quantity": 2,
+            "id": 243372637,
+            "price": "320",
+            "color": "#FF0000"
         }
-        return area_list;
     };
 
     var get_seat_list = function() {
         var seat_info = {
+            max_buy: 5,
             seat_list: [
-
                 {
                     "rownum": "1",
                     "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "2",
                     "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "3",
-                    "rowid": "加座1",
-                    "columns": "ZL,ZL,LK@29@C,LK@27@C,LK@25@C,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,ZL,ZL,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,ZL,ZL,ZL,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,LK@24@C,LK@26@C,ZL,ZL"
+                    "rowid": "1",
+                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,A@11@D,A@9@D,A@7@D,A@5@D,A@3@D,A@1@D,A@2@D,A@4@D,A@6@D,A@8@D,A@10@D,A@12@D,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "4",
-                    "rowid": "立位",
-                    "columns": "ZL,ZL,LK@5@A,LK@3@A,LK@1@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@2@A,LK@4@A,ZL,ZL"
+                    "rowid": "2",
+                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,A@11@D,A@9@D,A@7@D,A@5@D,A@3@D,A@1@D,A@2@D,A@4@D,A@6@D,A@8@D,A@10@D,A@12@D,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "5",
-                    "rowid": "立位",
-                    "columns": "ZL,ZL,LK@11@A,LK@9@A,LK@7@A,A@23@B,A@21@B,A@19@B,A@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,ZL,ZL,ZL,LK@12@B,LK@14@B,A@16@B,A@18@B,A@20@B,A@22@B,LK@6@A,LK@8@A,ZL,ZL"
+                    "rowid": "3",
+                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "6",
-                    "rowid": "立位",
-                    "columns": "ZL,ZL,LK@17@A,LK@15@A,LK@13@A,A@23@B,A@21@B,A@19@B,LK@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,ZL,ZL,LK@14@B,LK@16@B,A@18@B,A@20@B,A@22@B,A@24@B,LK@10@A,LK@12@A,ZL,ZL"
+                    "rowid": "4",
+                    "columns": "ZL,ZL,ZL,ZL,LK@31@D,LK@29@A,LK@27@A,LK@25@D,LK@23@D,LK@21@A,LK@19@A,LK@17@D,LK@15@D,LK@13@A,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,LK@14@D,LK@16@A,LK@18@A,LK@20@D,LK@22@D,LK@24@A,LK@26@A,LK@28@D,LK@30@D,LK@32@A,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "7",
-                    "rowid": "3",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,LK@15@B,LK@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                    "rowid": "5",
+                    "columns": "ZL,ZL,ZL,ZL,LK@31@D,LK@29@A,LK@27@A,LK@25@D,LK@23@D,LK@21@A,LK@19@A,LK@17@D,LK@15@D,LK@13@A,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,LK@14@D,LK@16@A,LK@18@A,LK@20@D,LK@22@D,LK@24@A,LK@26@A,LK@28@D,LK@30@D,LK@32@A,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "8",
-                    "rowid": "4",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "9",
-                    "rowid": "5",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                    "rowid": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "10",
                     "rowid": "6",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "11",
-                    "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "rowid": "7",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "12",
-                    "rowid": "加座2",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,ZL,ZL,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,ZL,ZL,ZL,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,ZL,ZL,ZL,ZL"
+                    "rowid": "8",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "13",
-                    "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "rowid": "9",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "14",
-                    "rowid": "7",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                    "rowid": "10",
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 },
                 {
                     "rownum": "15",
-                    "rowid": "8",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                    "rowid": "11",
+                    "columns": "ZL,ZL,LK@33@C,LK@31@C,LK@29@C,LK@27@C,ZL,ZL,LK@25@C,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,ZL,ZL,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,LK@24@C,ZL,ZL,LK@26@C,LK@28@C,LK@30@C,LK@32@C,ZL,ZL"
                 },
                 {
                     "rownum": "16",
-                    "rowid": "9",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                    "rowid": "12",
+                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,LK@3@C,LK@1@C,ZL,ZL,LK@2@C,LK@4@C,LK@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
                 },
                 {
                     "rownum": "17",
-                    "rowid": "10",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,ZL,ZL,ZL,A@12@B,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,ZL,ZL,ZL,ZL"
+                    "rowid": "13",
+                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,A@3@C,A@1@C,ZL,ZL,A@2@C,A@4@C,A@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
                 },
                 {
                     "rownum": "18",
-                    "rowid": "11",
-                    "columns": "ZL,ZL,ZL,ZL,ZL,A@23@B,A@21@B,A@19@B,A@17@B,A@15@B,A@13@B,ZL,ZL,A@11@B,A@9@B,A@7@B,A@5@B,A@3@B,A@1@B,A@2@B,A@4@B,A@6@B,A@8@B,A@10@B,A@12@B,ZL,ZL,A@14@B,A@16@B,A@18@B,A@20@B,A@22@B,A@24@B,ZL,ZL,ZL,ZL"
+                    "rowid": "14",
+                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,A@3@C,A@1@C,ZL,ZL,A@2@C,A@4@C,A@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
                 },
                 {
                     "rownum": "19",
-                    "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "rowid": "15",
+                    "columns": "ZL,ZL,LK@33@B,LK@31@B,LK@29@B,LK@27@B,ZL,ZL,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,ZL,ZL,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,ZL,ZL,LK@26@B,LK@28@B,LK@30@B,LK@32@B,ZL,ZL"
                 },
                 {
                     "rownum": "20",
+                    "rowid": "16",
+                    "columns": "ZL,ZL,LK@33@B,LK@31@B,LK@29@B,LK@27@B,ZL,ZL,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,ZL,ZL,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,ZL,ZL,LK@26@B,LK@28@B,LK@30@B,LK@32@B,ZL,ZL"
+                },
+                {
+                    "rownum": "21",
+                    "rowid": "17",
+                    "columns": "ZL,ZL,LK@39@B,LK@37@B,LK@35@B,LK@33@B,LK@31@B,LK@29@B,LK@27@B,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,LK@26@B,LK@28@B,LK@30@B,LK@32@B,LK@34@B,LK@36@B,LK@38@B,ZL,ZL"
+                },
+                {
+                    "rownum": "22",
                     "rowid": null,
-                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
                 }
-
 
             ],
-            "seat_type_dict": {
+            seat_type_dict: {
                 "A": {
-                    "color": '#FF0000',
-                    "price": "90",
-                    "maxbuy": 6,
-                    "disprice_list": []
+                    "color": '#203973',
+                    "price": "80",
+                    "maxbuy": 6
+                },
+                "B": {
+                    "color": '#E914DC',
+                    "price": "140",
+                    "maxbuy": 6
+                },
+                "C": {
+                    "color": '#006CFF',
+                    "price": "120",
+                    "maxbuy": 6
+                },
+                "D": {
+                    "color": '#EAED07',
+                    "price": "180",
+                    "maxbuy": 6
+                },
+                "E": {
+                    "color": '#137313',
+                    "price": "380",
+                    "maxbuy": 6
                 }
-            }
+            },
+            dis_price_list: [
+                {
+                    "seat_type": "D",
+                    "quantity": 2,
+                    "id": "243372637",
+                    "price": "320",
+                    "color": "#FF0000"
+                }, {
+                    "seat_type": "D",
+                    "quantity": 3,
+                    "id": "243372637",
+                    "price": "450",
+                    "color": "#FF0000"
+                }
+            ]
         };
 
+        // 处理座位类型
+        if(seat_info.seat_type_dict){
+            for(var seat_type in seat_info.seat_type_dict) {
+                current_seat_type_list[seat_type] = {
+                    max_buy: seat_info.seat_type_dict[seat_type].maxbuy,
+                    price: seat_info.seat_type_dict[seat_type].price,
+                    color: seat_info.seat_type_dict[seat_type].color,
+                    selected_seats: []
+                };
+            }
+        }
+        console.log(current_seat_type_list);
+
+        // 处理最大购买数
+        current_max_buy = seat_info.max_buy;
+
+        // 处理当前选中的优惠
+        var selected_dis_price_idx = 0;
+        var selected_dis_price = seat_info.dis_price_list[selected_dis_price_idx];
+        current_dis_price[selected_dis_price.seat_type] = $.extend({}, selected_dis_price);
+
+        // 处理座位表
         var seat_list = seat_info.seat_list;
         var area_list = [];
         seat_list.forEach(function(seat_row){
@@ -723,7 +822,6 @@
     };
 
     var enter_area = function(area){
-//        var area_list = get_area_list(area);
         var area_list = get_seat_list(area);
         //0:背景, 1:可售, 2:锁定, 3:选中, 4:套票
         load_images([
