@@ -2,21 +2,44 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
+    <link rel="stylesheet" type="text/css" href="static/css/vendor/normalize.css"/>
     <style type="text/css">
         html,body{
             height: 100%;
             width: 100%;
         }
         .canvas {
-            height: 100%;
+            height: 90%;
             width: 100%;
+        }
+        .selected_seats{
+            margin: 0 auto;
+            text-align: center;
+        }
+        ul {
+            height: 10%;
+            width: 80%;
+            overflow: scroll;
+        }
+        ul li {
+            display: inline-block;
+            background-color: #d94648;
+            margin: 0 4px 4px 0;
+            border-radius: 2px;
+            color: #fff;
+            padding: 2px;
         }
     </style>
 </head>
 <body>
 <div class="canvas" id="canvasDiv">
-    <canvas id="onlineSeatZone" width="414" height="581"></canvas>
+    <!--<canvas id="onlineSeatZone" width="414" height="581"></canvas>-->
+    <canvas id="onlineSeatZone"></canvas>
+</div>
+<div class="selected_seats">
+   <ul id="selected_seat_list"></ul>
 </div>
 
 <script src="static/js/vendor/zepto.js"></script>
@@ -403,8 +426,9 @@
         //初始化loading效果
         var canvas = document.getElementById(canvas_dom_id);
         var context = canvas.getContext('2d');
-        var w = canvas.width = 500*2;
-        var h = canvas.height = 603*2;
+        var w = canvas.width = $('#' + canvas_dom_id).parent().width();
+//        var h = canvas.height = 603*2;
+        var h = canvas.height = $('#' + canvas_dom_id).parent().height();
         var load = function (image) {
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0, image.width, image.height, (w - image.width) / 2, (h - image.height) / 2, image.width, image.height);
@@ -419,8 +443,10 @@
         li.src = "http://dui.dmcdn.cn/damai_v2/common/img/logo.png";
 
 
-        var width = 500*2;
-        var height = 603*2;
+//        var width = 500*2;
+//        var height = 603*2;
+        var width = w;
+        var height = h;
         var boxMaxWidth = 0;
         var boxMaxHeight = 0;
 
@@ -444,22 +470,37 @@
         });
     };
 
+    var selected_seat_list = [];
+
     var load_seat_data = function(canvas_dom_id, image_list, area_list){
         load_canvas_data(canvas_dom_id, undefined, image_list, area_list, function(item){
             var select_state = seat_states[3];
             if(item.img_id == 3) {
+                // cancel select
                 select_state = seat_states[1];
                 item.state = select_state.state;
                 item.img_id = select_state.img_id;
                 item.color = select_state.color;
                 console.log(item);
-                return item
+                var index = selected_seat_list.indexOf(item);
+                if(index > -1){
+                    selected_seat_list.splice(index, 1);
+                }
+            }else{
+                // select
+                item.state = select_state.state;
+                item.img_id = select_state.img_id;
+                item.color = select_state.color;
+                console.log(item);
+                console.log(item.seat_row + '排' + item.seat_no + '座');
+                selected_seat_list.push(item);
             }
-            item.state = select_state.state;
-            item.img_id = select_state.img_id;
-            item.color = select_state.color;
-            console.log(item);
-            console.log(item.seat_row + '排' + item.seat_no + '座');
+
+            $('#selected_seat_list').empty();
+            selected_seat_list.forEach(function(seat){
+                $('#selected_seat_list').append('<li>' + seat.seat_row + '排' + seat.seat_no + '座' + '</li>')
+            });
+
             return item;
         });
     };
@@ -500,107 +541,6 @@
     var get_seat_list = function() {
         var seat_info = {
             seat_list: [
-//                {
-//                    "rownum": "1",
-//                    "rowid": null,
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "2",
-//                    "rowid": null,
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "3",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,LK@107@A,LK@102@A,LK@99@A,LK@94@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@5@A,ZL,LK@10@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "4",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,LK@106@A,ZL,LK@98@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@4@A,ZL,LK@9@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "5",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,LK@105@A,LK@101@A,LK@97@A,LK@93@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@3@A,ZL,LK@8@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "6",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,LK@104@A,ZL,LK@96@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@2@A,ZL,LK@7@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "7",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,LK@103@A,LK@100@A,LK@95@A,LK@92@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@1@A,ZL,LK@6@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "8",
-//                    "rowid": null,
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "9",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@91@A,LK@83@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "10",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@90@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "11",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@89@A,LK@82@A,ZL,LK@48@A,ZL,ZL,LK@45@A,ZL,LK@44@A,ZL,ZL,LK@41@A,ZL,LK@40@A,ZL,ZL,LK@37@A,ZL,LK@36@A,ZL,ZL,LK@33@A,ZL,LK@32@A,ZL,ZL,LK@29@A,ZL,LK@28@A,ZL,ZL,LK@25@A,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "12",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@47@A,LK@46@A,ZL,ZL,ZL,LK@43@A,LK@42@A,ZL,ZL,ZL,LK@39@A,LK@38@A,ZL,ZL,ZL,LK@35@A,LK@34@A,ZL,ZL,ZL,LK@31@A,LK@30@A,ZL,ZL,ZL,LK@27@A,LK@26@A,ZL,ZL,LK@14@A,LK@18@A,LK@24@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "13",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@88@A,LK@81@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@23@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "14",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@87@A,ZL,ZL,LK@72@A,ZL,ZL,LK@69@A,ZL,LK@68@A,ZL,ZL,LK@65@A,ZL,LK@64@A,ZL,ZL,LK@61@A,ZL,LK@60@A,ZL,ZL,LK@57@A,ZL,LK@56@A,ZL,ZL,LK@53@A,ZL,LK@52@A,ZL,ZL,LK@49@A,ZL,LK@13@A,LK@17@A,LK@22@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "15",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@86@A,LK@80@A,ZL,ZL,LK@71@A,LK@70@A,ZL,ZL,ZL,LK@67@A,LK@66@A,ZL,ZL,ZL,LK@63@A,LK@62@A,ZL,ZL,ZL,LK@59@A,LK@58@A,ZL,ZL,ZL,LK@55@A,LK@54@A,ZL,ZL,ZL,LK@51@A,LK@50@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "16",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@85@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@12@A,LK@16@A,LK@21@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "17",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,LK@84@A,LK@79@A,ZL,ZL,ZL,ZL,ZL,ZL,LK@78@A,ZL,ZL,LK@77@A,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@76@A,LK@75@A,ZL,ZL,LK@74@A,LK@73@A,ZL,ZL,ZL,ZL,ZL,ZL,LK@20@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "18",
-//                    "rowid": "1",
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@11@A,LK@15@A,LK@19@A,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "19",
-//                    "rowid": null,
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-//                {
-//                    "rownum": "20",
-//                    "rowid": null,
-//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
-//                },
-
 
                 {
                     "rownum": "1",
@@ -843,8 +783,6 @@
         load_area_data("onlineSeatZone", area_list, JSON.parse(play_info.extra).area_bg);
 
     };
-
-//    load_area_data("onlineSeatZone", area_list, jsonData.seatimg);
 
     gen_play_info();
 
