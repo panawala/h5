@@ -33,6 +33,33 @@
             color: #fff;
             padding: 2px;
         }
+        .toolbar {
+            position: fixed;
+            height: 50px;
+            line-height: 50px;
+            background-color: #d94648;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: #ffffff;
+        }
+        .toolbar .info {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            background-color: #333333;
+            right: 80px;
+            padding-left: 20px;
+        }
+        .toolbar .confirm a {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 80px;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +69,13 @@
 </div>
 <div class="selected_seats">
    <ul id="selected_seat_list"></ul>
+</div>
+
+<div class="toolbar">
+    <div class="info">共：160元</div>
+    <div class="confirm">
+        <a href="javascript:void(0);" onclick="alert('hello');">确认</a>
+    </div>
 </div>
 
 <script src="static/js/vendor/zepto.js"></script>
