@@ -1,37 +1,5 @@
-.generate-columns(4);
-
-.generate-columns(@n, @i: 1) when (@i =< @n) {
-  .column-@{i} {
-    width: (@i * 100% / @n);
-  }
-  .generate-columns(@n, (@i + 1));
-}
-
-.generate-lotteries(@n, @i: 1) when (@i =< @n) {
-
-  #lottery .lotTxt .txt@{i} {
-    transform: rotate((@i - 1) * 60deg);
-  }
-  .generate-lotteries(@n, (@i + 1));
-}
-
-.generate-lotteries(6);
-
 @charset "utf-8";
 /* CSS Main */
-@font-face {
-  font-family: 'hl';
-  src: url('font/hl.eot?14728937');
-  src: url('font/hl.eot?14728937#iefix') format('embedded-opentype'),
-  url('font/hl.woff?14728937') format('woff'),
-  url('font/hl.ttf?14728937') format('truetype'),
-  url('font/hl.svg?14728937#hl') format('svg');
-}
-
-[class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: "hl";
-  font-style: normal;
-}
 
 html {
   height: 100%;
@@ -636,11 +604,11 @@ body {
 
 /*旋转*/
 
-.lotCenter-animation-forever {
-  -webkit-animation: lotCenter-forever 3s linear 0s infinite;;
+.lotCenter-animation-fast{
+  -webkit-animation: lotCenter-fast 3s linear 0s infinite;;
 }
 
-@-webkit-keyframes lotCenter-forever {
+@-webkit-keyframes lotCenter-fast{
   0% {
     -webkit-transform: rotate(0deg);
   }
@@ -666,22 +634,68 @@ body {
 
 /* Use it like so: */
 
-.keyframes(something, { width: 100px; height: 100px; },
-{ width: 500px; height: 500px; });
-
 .generate-lot-center(@n, @i: 1) when (@i =< @n) {
 
-  .lotCenter-animation6-@{i} {
-    -webkit-animation: lotCenter6-@i 5s ease 0.2s forwards;
-  }
+  // 此处使用单引号，可以相当于字符串相加
+  .keyframes('lotCenter6-@{i}', { -webkit-transform: rotate(0deg); },
+  { -webkit-transform: rotate(3600deg + (@i - 1) * 60deg); });
 
-  .keyframes(lotCenter6-@{i}, { -webkit-transform: rotate(0deg); },
-  { -webkit-transform: rotate(60deg); });
+  // 此处声明变量，转啊转。。
+  @lotCenter6: ~'lotCenter6-@{i}';
+  .lotCenter-animation6-@{i} {
+    -webkit-animation: ~'@{lotCenter6}' (3600s + (@i - 1) * 60s)/1200 linear 0s forwards;
+  }
 
   .generate-lot-center(@n, (@i + 1));
 }
 
 .generate-lot-center(6);
 
+/*灯*/
+.lotLight-animation-normal {
+  -webkit-animation: lotLightNormal 5s linear 0s infinite;
+}
+
+@-webkit-keyframes lotLightNormal {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(60deg);
+  }
+}
+
+.lotLight-animation1 {
+  -webkit-animation: lotLight2 3s linear 0s infinite;
+}
+
+@-webkit-keyframes lotLight2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
 
 
+
+/* 定义一个走马灯动画 */
+
+@-webkit-keyframes marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(0, -100%); }
+}
+
+@keyframes marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(0, -100%); }
+}
+
+.marquee {
+  overflow: hidden;
+}
+
+.marquee div {
+  animation: marquee 10s linear infinite;
+}

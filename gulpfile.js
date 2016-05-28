@@ -98,8 +98,15 @@ gulp.task('rotate', ['clean'], function () {
         .pipe(gulp.dest('rotate/build'));
 });
 
-gulp.task('less', ['clean'], function () {
-    gulp.src(['rotate/rotate_files/*.less']) //多个文件以数组形式传入
+
+
+gulp.task('less-clean', function (cb) {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    del(['rotate/build'], cb);
+});
+
+gulp.task('less', [], function () {
+    gulp.src(paths.rotate_less) //多个文件以数组形式传入
         .pipe(less())
         .pipe(autoprefixer({
             browsers: [
@@ -110,7 +117,7 @@ gulp.task('less', ['clean'], function () {
             ],
             cascade: true
         }))
-        .pipe(gulp.dest('rotate/build')); //将会在src/css下生成index.css以及detail.css
+        .pipe(gulp.dest('rotate/rotate_files')); //将会在src/css下生成index.css以及detail.css
 });
 
 // Rerun the task when a file changes

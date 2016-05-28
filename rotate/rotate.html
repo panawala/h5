@@ -8,29 +8,42 @@
     <meta content="telephone=no" name="format-detection">
     <meta content="email=no" name="format-detection">
     <meta name="apple-touch-fullscreen" content="NO">
-    <link href="./rotate_files/wap_Lottery.css" rel="stylesheet" type="text/css">
+    <!--<link href="./rotate_files/wap_Lottery.css" rel="stylesheet" type="text/css">-->
+    <link href="./rotate_files/test_less.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="./rotate_files/jquery-2.1.1.min.js"></script>
     <script>
-        $(document).ready(function (e) {
-            var prizeLength = $(".prize").length;
-            $(".lotCenter").click(function () {
-                $(".lotCenter").addClass("lotCenter-animation-forever");
-                $(".lotLight").removeClass("lotLight-animation2").addClass("lotLight-animation1");
-                setTimeout(function () {
-                    //最终中奖奖品位置1-6
-                    var prizeIndex = 3;
-                    if (prizeLength < prizeIndex) {
-                        alert("奖品不存在")
-                    }
-                    $(".lotCenter").removeClass("lotCenter-animation-forever");
-                    $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation2");
-                    $(".lotCenter").addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
 
-                }, 6000);
-                setTimeout(function () {
-                    $("#msgupdata").fadeIn(300);
-                }, 16000);
-            });
+        var prizeLength = 6;
+        var prizeIndex = 0;
+
+        var resetPrize = function () {
+            $("#lotCenter").removeClass().addClass("lotCenter");
+            $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation-normal");
+            prizeIndex = 0;
+        };
+
+        var fetchPrize = function () {
+            setTimeout(function () {
+                prizeIndex = 4;
+            }, 2000);
+        };
+
+        var beginFetchPrize = function () {
+            $("#lotCenter").addClass("lotCenter-animation-fast");
+            $(".lotLight").removeClass("lotLight-animation-normal").addClass("lotLight-animation1");
+        };
+
+        var endFetchPrize = function (cb) {
+            $("#lotCenter").removeClass("lotCenter-animation-fast").addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
+            setTimeout(function () {
+                $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation-normal");
+            }, 3000);
+            setTimeout(function () {
+                cb && cb();
+            }, 4000);
+        };
+
+        var initLottery = function () {
             var fanAngle = 360 / prizeLength;
             for (var i = 1; i <= prizeLength; i++) {
                 var numAngle = fanAngle * i - fanAngle;
@@ -64,15 +77,30 @@
                 $(".prize" + i).css("transform", "rotate(" + prizeAngle + "deg)");
                 $(".prizebg").css("transform", "rotate(" + complementaryAngle + "deg)");
             }
-        });
+        };
 
-        function msgclose() {
+        var msgclose = function () {
             $('.loginForm').fadeOut(300);
-        }
-        function msgupdata() {
+        };
+        var msgupdata = function () {
             $("#msgupdata").hide();
             $("#msgend").fadeIn(300);
-        }
+        };
+
+        $(document).ready(function (e) {
+            initLottery();
+            $("#lotCenter").click(function () {
+                beginFetchPrize();
+                fetchPrize();
+
+                setTimeout(function () {
+                    endFetchPrize(function () {
+                        $("#msgupdata").fadeIn(300);
+                    });
+                }, 4000);
+            });
+        });
+
     </script>
 </head>
 <body>
@@ -82,7 +110,7 @@
             <div class="lotteryTitle">幸福大转盘</div>
             <div id="lottery">
                 <div class="lotBg">
-                    <ul class="lotLight lotLight-animation2">
+                    <ul class="lotLight lotLight-animation-normal">
                         <li class="lotLight1"><i></i></li>
                         <li class="lotLight2"><i></i></li>
                         <li class="lotLight3"><i></i></li>
@@ -169,15 +197,23 @@
 
                         <p class="img6" style="transform: rotate(300deg);"><img src="./rotate_files/TV.png"></p>
                     </div>
-                    <div class="lotCenter">
+                    <div id="lotCenter" class="lotCenter">
                         <i></i>
                         <a href="javascript:void(0)"><span>开始<br>抽奖</span></a>
                     </div>
                 </div>
             </div>
 
-            <div class="lotterynum" style="margin-left: 35.1562px; margin-right: 35.1562px;">
-                活动说明:活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活
+            <div class="marquee lotterynum">
+                <div>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                    <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+                </div>
             </div>
 
             <div id="msgupdata" class="loginForm dn">
