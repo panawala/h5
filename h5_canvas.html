@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <style type="text/css">
+        html,body{
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .canvas {
+            height: 90%;
+            width: 100%;
+        }
+        .selected_seats{
+            margin: 0 auto;
+            text-align: center;
+            height: 10%;
+        }
+        ul {
+            height: 100%;
+            width: 80%;
+            overflow: scroll;
+        }
+        ul li {
+            display: inline-block;
+            background-color: #d94648;
+            margin: 0 4px 4px 0;
+            border-radius: 2px;
+            color: #fff;
+            padding: 2px;
+        }
+        .toolbar {
+            position: fixed;
+            height: 50px;
+            line-height: 50px;
+            background-color: #d94648;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: #ffffff;
+        }
+        .toolbar .info {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            background-color: #333333;
+            right: 80px;
+            padding-left: 20px;
+        }
+        .toolbar .confirm a {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 80px;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="canvas" id="canvasDiv">
+    <!--<canvas id="onlineSeatZone" width="414" height="581"></canvas>-->
+    <canvas id="onlineSeatZone"></canvas>
+</div>
+<div class="selected_seats">
+   <ul id="selected_seat_list"></ul>
+</div>
+
+<div class="toolbar">
+    <div class="info">共：160元</div>
+    <div class="confirm">
+        <a href="javascript:void(0);" onclick="alert('hello');">确认</a>
+    </div>
+</div>
+
+<script src="static/js/vendor/zepto.js"></script>
+<script src="http://m.damai.cn/vendor/zepto/event.js"></script>
+<script src="http://m.damai.cn/vendor/zepto/touch.js"></script>
+<script type="application/javascript">
+
+    // 	0：空，1：可售，2：锁定，3：选中（网页用）
+    var seat_states = [
+        {state: false, color: 'ffffff', img_id: 0},
+        {state: true, color: 'ff0000', img_id: 1},
+        {state: false, color: 'ff0000', img_id: 2},
+        {state: true, color: 'ff0000', img_id: 3}
+    ];
+
+    (function () {
+        var root = this;
+        var TouchCanvas = function (options) {
+            if (!options || !options.canvas) {
+                throw '参数不正确或参数错误';
+            }
+            this.canvas = options.canvas;
+            this.canvas.width = !options.width ? this.canvas.clientWidth : options.width;
+            this.canvas.height = !options.height ? this.canvas.clientHeight : options.height;
+            this.context = this.canvas.getContext('2d');
+
+            this.position = { x: 0, y: 0 };
+            this.scale = { x: 0.5, y: 0.5 };
+            this.lastZoomScale = null;
+            this.lastX = null;
+            this.lastY = null;
+            this.init = false;
+            this.isAnimate = false;//是否处于拖放或移动中，如果处于动画中则点击事件无效
+            //数据
+            this.area_list = !options.area_list ? [] : options.area_list;
+            this.image_list = !options.image_list? [] : options.image_list;
+
+            this.select_index_callback = options.select_index_callback;
+
+            this.bg_img = options.bg_img;
+            if(this.bg_img){
+                var bg_image = new Image();
+                bg_image.onerror = function () {
+                    alert("座位图加载失败！");
+                };
+                bg_image.onload = (function(){
+                    this.offCanvas = document.createElement('canvas');
+                    if (bg_image.width && bg_image.height) {
+                        this.offCanvas.width =  bg_image.width > options.offWidth ? bg_image.width: options.offWidth;
+                        this.offCanvas.height = bg_image.height > options.offHeight ? bg_image.height: options.offHeight;
+                    }
+                    this.offContext = this.offCanvas.getContext('2d');
+                    this.offContext.clearRect(0, 0, this.offCanvas.width, this.offCanvas.height);
+                    this.offContext.drawImage(bg_image, 0, 0, this.offCanvas.width, this.offCanvas.height);
+                    DrawArea(this.offContext, this.area_list, this.image_list);
+                }).bind(this);
+                bg_image.src = this.bg_img;
+
+            }else{
+                this.offCanvas = document.createElement('canvas');
+                this.offCanvas.width = options.offWidth;
+                this.offCanvas.height = options.offHeight;
+                this.offContext = this.offCanvas.getContext('2d');
+                this.offContext.clearRect(0, 0, options.offWidth, options.offHeight);
+                DrawArea(this.offContext, this.area_list, this.image_list);
+            }
+
+            this.checkRequestAnimationFrame();
+            requestAnimationFrame(this.animate.bind(this));
+            this.setEventListeners();
+        };
+
+        var DrawArea = function(canvasContext, area_list, image_list) {
+            for (var j = 0, pj = area_list.length; j < pj; j++)
+            {
+                var area = area_list[j];
+                canvasContext.beginPath();
+                if(area.img_id == -1) {
+                    var points = area.points;
+                    for (var r = 0, ar = points.length; r < ar; r++) {
+                        canvasContext.lineTo(points[r].x, points[r].y);
+                        canvasContext.fillStyle = ColorStrtoRGB(area.color);
+                    }
+                }else{
+                    var pos_x = area.points[0].x;
+                    var pos_y = area.points[0].y;
+                    var width = 20;
+                    var height = 20;
+                    canvasContext.clearRect(pos_x, pos_y, width, height);
+                    canvasContext.fillStyle = ColorStrtoRGB(area.color);
+                    canvasContext.fillRect(pos_x, pos_y, width, height);
+                    canvasContext.drawImage(image_list[area.img_id], area.points[0].x, area.points[0].y, 20, 20);
+                }
+                canvasContext.fill();
+                canvasContext.closePath();
+            }
+        };
+
+
+        TouchCanvas.prototype = {
+            animate: function () {
+                if (!this.init) {
+
+                    if (this.offCanvas && this.offCanvas.width) {
+                        var scaleRatio = null;
+                        if (this.canvas.clientWidth > this.canvas.clientHeight) {
+                            scaleRatio = this.canvas.clientWidth / this.offCanvas.width;
+                        }
+                        else {
+                            scaleRatio = this.canvas.clientHeight / this.offCanvas.height;
+                        }
+                        this.scale.x = scaleRatio;
+                        this.position.x = (this.canvas.clientWidth - this.offCanvas.width * this.scale.x) / 2;
+                        this.scale.y = scaleRatio;
+                        this.position.y = (this.canvas.clientHeight - this.offCanvas.height * this.scale.y) / 2;
+                        this.init = true;
+                    }
+                }
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.offCanvas && this.context.drawImage(
+                        this.offCanvas,
+                        this.position.x, this.position.y,
+                        this.scale.x * this.offCanvas.width,
+                        this.scale.y * this.offCanvas.height);
+
+                requestAnimationFrame(this.animate.bind(this));
+            },
+
+
+            gesturePinchZoom: function (event) {
+                var zoom = false;
+                if (event.targetTouches.length >= 2) {
+                    var p1 = event.targetTouches[0];
+                    var p2 = event.targetTouches[1];
+                    var zoomScale = Math.sqrt(Math.pow(p2.pageX - p1.pageX, 2) + Math.pow(p2.pageY - p1.pageY, 2));
+
+                    if (this.lastZoomScale) {
+                        zoom = zoomScale - this.lastZoomScale;
+                    }
+
+                    this.lastZoomScale = zoomScale;
+                }
+                return zoom;
+            },
+            //缩放
+            doZoom: function (zoom) {
+                if (!zoom) return;
+
+                var currentScale = this.scale.x;
+                var newScale = this.scale.x + zoom / 75;
+
+                var deltaScale = newScale - currentScale;
+                var currentWidth = (this.offCanvas.width * this.scale.x);
+                var currentHeight = (this.offCanvas.height * this.scale.y);
+                var deltaWidth = this.offCanvas.width * deltaScale;
+                var deltaHeight = this.offCanvas.height * deltaScale;
+
+                var canvasmiddleX = this.canvas.clientWidth / 2;
+                var canvasmiddleY = this.canvas.clientHeight / 2;
+                var xonmap = (-this.position.x) + canvasmiddleX;
+                var yonmap = (-this.position.y) + canvasmiddleY;
+                var coefX = -xonmap / (currentWidth);
+                var coefY = -yonmap / (currentHeight);
+                var newPosX = this.position.x + deltaWidth * coefX;
+                var newPosY = this.position.y + deltaHeight * coefY;
+
+                var newWidth = currentWidth + deltaWidth;
+                var newHeight = currentHeight + deltaHeight;
+
+                if (newWidth < this.canvas.clientWidth) return;
+                if (newPosX > 0) { newPosX = 0; }
+                if (newPosX + newWidth < this.canvas.clientWidth) { newPosX = this.canvas.clientWidth - newWidth; }
+
+                if (newHeight < this.canvas.clientHeight) return;
+                if (newPosY > 0) { newPosY = 0; }
+                if (newPosY + newHeight < this.canvas.clientHeight) { newPosY = this.canvas.clientHeight - newHeight; }
+
+                this.scale.x = newScale;
+                this.scale.y = newScale;
+                this.position.x = newPosX;
+                this.position.y = newPosY;
+            },
+            //移动
+            doMove: function (relativeX, relativeY) {
+                if (this.lastX && this.lastY) {
+                    var maxX = this.canvas.clientWidth / 3;
+                    var maxY = this.canvas.clientHeight / 3;//最多允许拖出宽高1/3
+                    var deltaX = relativeX - this.lastX;
+                    var deltaY = relativeY - this.lastY;
+                    var currentWidth = (this.offCanvas.width * this.scale.x);
+                    var currentHeight = (this.offCanvas.height * this.scale.y);
+
+                    this.position.x += deltaX;
+                    this.position.y += deltaY;
+
+                    if (this.position.x > maxX) {
+                        this.position.x = maxX;
+                    }
+                    else if (this.position.x + currentWidth + maxX < this.canvas.clientWidth) {
+                        this.position.x = this.canvas.clientWidth - currentWidth - maxX;
+                    }
+                    if (this.position.y > maxY) {
+                        this.position.y = maxY;
+                    }
+                    else if (this.position.y + currentHeight + maxY < this.canvas.clientHeight) {
+                        this.position.y = this.canvas.clientHeight - currentHeight - maxY;
+                    }
+                }
+
+                this.lastX = relativeX;
+                this.lastY = relativeY;
+            },
+
+            setEventListeners: function () {
+                // touch event
+                this.canvas.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    this.lastX = null;
+                    this.lastY = null;
+                    this.lastZoomScale = null;
+                }.bind(this));
+
+                this.canvas.addEventListener('touchmove', function (e) {
+                    e.preventDefault();
+
+                    if (e.targetTouches.length == 2) {
+                        this.isAnimate = true;
+                        this.doZoom(this.gesturePinchZoom(e));
+                    }
+                    else if (e.targetTouches.length == 1) {
+                        this.isAnimate = true;
+                        var relativeX = e.targetTouches[0].pageX - this.canvas.getBoundingClientRect().left;
+                        var relativeY = e.targetTouches[0].pageY - this.canvas.getBoundingClientRect().top;
+                        this.doMove(relativeX, relativeY);
+                    }
+                }.bind(this));
+
+                this.canvas.addEventListener('touchend', function (e) {
+                    e.preventDefault();
+                    if (e.changedTouches.length == 1 && !this.isAnimate) {
+                        if (this.area_list==null||this.area_list.length == 0) { return; }//没有数据
+                        var touch = event.changedTouches[0];
+                        var relativeX = touch.pageX - this.canvas.getBoundingClientRect().left;
+                        var relativeY = touch.pageY - this.canvas.getBoundingClientRect().top;
+                        var pt = {
+                            x: relativeX - this.position.x,
+                            y: relativeY - this.position.y
+                        };
+                        var selected_item = null;
+                        var selected_index = 0 ;
+                        for (var n = 0, ln = this.area_list.length; n < ln; n++) {
+                            var area = this.area_list[n];
+                            if (!area.state) {
+                                //跳出已经不需要验证的数据
+                                continue;
+                            }
+
+                            var poly = area.points;
+                            if (poly == null || poly.length == 0) {
+                                //没有坐标数据
+                                break;
+                            }
+
+                            var c = this.rayCasting(pt, poly, this.scale);
+                            if (c != "out") {
+                                selected_item = area;
+                                selected_index = n;
+                                break;
+                            }
+                        }
+                        if (selected_item != null) {
+                            var new_item = this.select_index_callback(selected_item);
+                            if(new_item){
+                                if(selected_item.img_id > -1) {
+                                    this.area_list[selected_index] = new_item;
+                                    this.offContext.beginPath();
+                                    var points = new_item.points;
+                                    var pos_x = points[0].x;
+                                    var pos_y = points[0].y;
+                                    var width = 20;
+                                    var height = 20;
+                                    this.offContext.clearRect(pos_x, pos_y, width, height);
+                                    this.offContext.fillStyle = ColorStrtoRGB(new_item.color);
+                                    this.offContext.fillRect(pos_x, pos_y, width, height);
+                                    this.offContext.drawImage(this.image_list[new_item.img_id], points[0].x, points[0].y, width, height);
+                                    this.offContext.closePath();
+                                }
+                            }
+                        }
+                    }
+                    if (e.targetTouches.length == 0) {
+                        this.isAnimate = false;
+                    }
+                }.bind(this));
+
+            },
+
+            checkRequestAnimationFrame: function () {
+                var lastTime = 0;
+                var vendors = ['ms', 'moz', 'webkit', 'o'];
+                for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+                    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+                    window.cancelAnimationFrame =
+                            window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+                }
+
+                if (!window.requestAnimationFrame) {
+                    window.requestAnimationFrame = function (callback, element) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function () { callback(currTime + timeToCall); },
+                                timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+                }
+
+                if (!window.cancelAnimationFrame) {
+                    window.cancelAnimationFrame = function (id) {
+                        clearTimeout(id);
+                    };
+                }
+            },
+            rayCasting: function (p, poly, scale) {
+                var px = p.x,
+                        py = p.y,
+                        flag = false;
+                for (var i = 0, l = poly.length, j = l - 1; i < l; j = i, i++) {
+                    var sx = poly[i].x * scale.x,
+                            sy = poly[i].y * scale.y,
+                            tx = poly[j].x * scale.x,
+                            ty = poly[j].y * scale.y;
+
+                    // 点与多边形顶点重合
+                    if ((sx === px && sy === py) || (tx === px && ty === py)) {
+                        return 'on';
+                    }
+                    // 判断线段两端点是否在射线两侧
+                    if ((sy < py && ty >= py) || (sy >= py && ty < py)) {
+                        // 线段上与射线 Y 坐标相同的点的 X 坐标
+                        var x = sx + (py - sy) * (tx - sx) / (ty - sy);
+                        // 点在多边形的边上
+                        if (x === px) {
+                            return 'on';
+                        }
+                        // 射线穿过多边形的边界
+                        if (x > px) {
+                            flag = !flag;
+                        }
+                    }
+                }
+                // 射线穿过多边形边界的次数为奇数时点在多边形内
+                return flag ? 'in' : 'out';
+            }
+        };
+
+        root.TouchCanvas = TouchCanvas;
+    }).call(this);
+
+</script>
+
+<script type="application/javascript">
+
+    var doc = document, win = window;
+    var touchCanvas = null;
+    var ColorStrtoRGB = function (col) {
+        var r = col[0] + col[1];
+        var g = col[2] + col[3];
+        var b = col[4] + col[5];
+        return 'rgba(' + parseInt(r, 16).toString(10) + "," + parseInt(g, 16).toString(10) + "," + parseInt(b, 16).toString(10) + ",0.55)";
+    };
+
+    var load_canvas_data = function(canvas_dom_id, bg_img, image_list, area_list, select_index_callback){
+        if (touchCanvas) {
+            //销毁对象
+            if (touchCanvas.area_list) {
+                touchCanvas.area_list = null;
+            }
+            win.cancelAnimationFrame(touchCanvas.animate());
+            touchCanvas = null;
+        }
+
+        //初始化loading效果
+        var canvas = document.getElementById(canvas_dom_id);
+        var context = canvas.getContext('2d');
+        var w = canvas.width = $('#' + canvas_dom_id).parent().width();
+//        var h = canvas.height = 603*2;
+        var h = canvas.height = $('#' + canvas_dom_id).parent().height();
+        var load = function (image) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, image.width, image.height, (w - image.width) / 2, (h - image.height) / 2, image.width, image.height);
+        };
+        var li = new Image();
+        li.complete = function () {
+            load(li);
+        };
+        li.onload = function () {
+            load(li);
+        };
+        li.src = "http://dui.dmcdn.cn/damai_v2/common/img/logo.png";
+
+
+//        var width = 500*2;
+//        var height = 603*2;
+        var width = w;
+        var height = h;
+        var offWidth = 0;
+        var offHeight = 0;
+
+        for (var i = 0, ai = area_list.length; i < ai; i++) {
+            var area = area_list[i];
+            var x = area.points[0].x + 20 | 0;
+            var y = area.points[0].y + 20 | 0;
+            offWidth = x > offWidth ? x : offWidth;
+            offHeight = y > offHeight ? y : offHeight;
+        }
+        touchCanvas = new TouchCanvas({
+            canvas: document.getElementById(canvas_dom_id),
+            width: width,
+            height: height,
+            offWidth: offWidth,
+            offHeight: offHeight,
+            area_list: area_list,
+            image_list: image_list,
+            bg_img: bg_img,
+            select_index_callback: select_index_callback
+        });
+    };
+
+    var selected_seat_list = [];
+
+    var load_seat_data = function(canvas_dom_id, image_list, area_list){
+        load_canvas_data(canvas_dom_id, undefined, image_list, area_list, function(item){
+            var select_state = seat_states[3];
+            if(item.img_id == 3) {
+                // 设置取消选中的颜色，背景等
+                select_state = seat_states[1];
+                item.state = select_state.state;
+                item.img_id = select_state.img_id;
+                item.color = select_state.color;
+                console.log(item);
+
+                // 从已选中座位列表中去除
+                var index = selected_seat_list.indexOf(item);
+                if(index > -1){
+                    selected_seat_list.splice(index, 1);
+                }
+
+                // 从规则中去除
+                var seat_index = current_seat_type_list[item.seat_type].selected_seats.indexOf(item);
+                if(seat_index > -1){
+                    current_seat_type_list[item.seat_type].selected_seats.splice(seat_index, 1);
+                }
+            }else{
+                // 设置选中的颜色和背景
+                item.state = select_state.state;
+                item.img_id = select_state.img_id;
+                item.color = select_state.color;
+                console.log(item);
+                console.log(item.seat_row + '排' + item.seat_no + '座' + current_seat_type_list[item.seat_type].price + '元');
+
+                // 判断规则
+                if(current_seat_type_list[item.seat_type].selected_seats.length >= current_seat_type_list[item.seat_type].max_buy){
+                    alert('最多选' + current_seat_type_list[item.seat_type].max_buy + '个');
+                    return;
+                }
+
+                if(selected_seat_list.length >= current_max_buy){
+                    alert('最多选' + current_max_buy + '个');
+                    return;
+                }
+
+//                var item_copy = $.extend({}, item);
+                current_seat_type_list[item.seat_type].selected_seats.push(item);
+                // 加入已选列表
+                selected_seat_list.push(item);
+            }
+
+            // 渲染已选中的html
+            $('#selected_seat_list').empty();
+
+            var current_seat_price = parseInt(current_seat_type_list[item.seat_type].price);
+
+            var total_fee = 0;
+            var dis_seats_count = 0;
+            selected_seat_list.forEach(function(seat){
+                total_fee += current_seat_price;
+                if(current_dis_price[seat.seat_type]){
+                    //如果含有套票
+                    dis_seats_count++;
+                }
+                $('#selected_seat_list').append('<li>' + seat.seat_row + '排' + seat.seat_no + '座'
+                + current_seat_type_list[seat.seat_type].price + '元</li>');
+            });
+
+            if(current_dis_price[item.seat_type]) {
+                // 计算含有套票时的总价, 减去优惠价格
+                var dis_price_quantity = current_dis_price[item.seat_type].quantity;
+                var dis_price_price = current_dis_price[item.seat_type].price;
+                var can_dis_price_count = parseInt(dis_seats_count / dis_price_quantity);
+
+                console.log('discount_price_count', can_dis_price_count);
+                var total_with_dis_fee = parseInt(dis_price_price) * can_dis_price_count;
+                var total_without_dis_fee = can_dis_price_count * dis_price_quantity * current_seat_price;
+                total_fee -= (total_without_dis_fee - total_with_dis_fee);
+            }
+            // 设置总价
+            $('#selected_seat_list').append('<li>共' + total_fee + '元</li>');
+
+            return item;
+        });
+    };
+
+    var load_area_data = function(canvas_dom_id, area_list, bg_img){
+        load_canvas_data(canvas_dom_id, bg_img, [], area_list, function(item){
+            enter_area(item);
+        });
+    };
+
+    var current_seat_type_list = {};
+    var current_max_buy = 0;
+    // 当前选中的套票格式
+    var current_dis_price = {
+        "D": {
+            "quantity": 2,
+            "id": 243372637,
+            "price": "320",
+            "color": "#FF0000"
+        }
+    };
+
+    var get_seat_list = function() {
+        // 获取座位信息
+//        var seat_info = {
+//            max_buy: 5,
+//            seat_list: [
+//                {
+//                    "row_num": "1",
+//                    "row_id": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "2",
+//                    "row_id": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "3",
+//                    "row_id": "1",
+//                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,A@11@D,A@9@D,A@7@D,A@5@D,A@3@D,A@1@D,A@2@D,A@4@D,A@6@D,A@8@D,A@10@D,A@12@D,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "4",
+//                    "row_id": "2",
+//                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,A@11@D,A@9@D,A@7@D,A@5@D,A@3@D,A@1@D,A@2@D,A@4@D,A@6@D,A@8@D,A@10@D,A@12@D,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "5",
+//                    "row_id": "3",
+//                    "columns": "ZL,ZL,ZL,ZL,A@31@D,A@29@D,A@27@D,A@25@D,A@23@D,A@21@D,A@19@D,A@17@D,A@15@D,A@13@D,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,A@14@D,A@16@D,A@18@D,A@20@D,A@22@D,A@24@D,A@26@D,A@28@D,A@30@D,A@32@D,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "6",
+//                    "row_id": "4",
+//                    "columns": "ZL,ZL,ZL,ZL,LK@31@D,LK@29@A,LK@27@A,LK@25@D,LK@23@D,LK@21@A,LK@19@A,LK@17@D,LK@15@D,LK@13@A,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,LK@14@D,LK@16@A,LK@18@A,LK@20@D,LK@22@D,LK@24@A,LK@26@A,LK@28@D,LK@30@D,LK@32@A,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "7",
+//                    "row_id": "5",
+//                    "columns": "ZL,ZL,ZL,ZL,LK@31@D,LK@29@A,LK@27@A,LK@25@D,LK@23@D,LK@21@A,LK@19@A,LK@17@D,LK@15@D,LK@13@A,ZL,ZL,LK@11@E,LK@9@E,LK@7@E,LK@5@E,LK@3@E,LK@1@E,LK@2@E,LK@4@E,LK@6@E,LK@8@E,LK@10@E,LK@12@E,ZL,ZL,LK@14@D,LK@16@A,LK@18@A,LK@20@D,LK@22@D,LK@24@A,LK@26@A,LK@28@D,LK@30@D,LK@32@A,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "8",
+//                    "row_id": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "9",
+//                    "row_id": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "10",
+//                    "row_id": "6",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "11",
+//                    "row_id": "7",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "12",
+//                    "row_id": "8",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "13",
+//                    "row_id": "9",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "14",
+//                    "row_id": "10",
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,LK@25@D,LK@23@A,LK@21@D,LK@19@D,LK@17@A,LK@15@A,LK@13@D,LK@11@D,LK@9@A,LK@7@A,LK@5@D,A@3@D,A@1@D,ZL,ZL,LK@2@D,LK@4@D,LK@6@A,LK@8@D,LK@10@D,LK@12@A,LK@14@A,LK@16@D,LK@18@D,LK@20@A,LK@22@A,LK@24@D,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "15",
+//                    "row_id": "11",
+//                    "columns": "ZL,ZL,LK@33@C,LK@31@C,LK@29@C,LK@27@C,ZL,ZL,LK@25@C,LK@23@C,LK@21@C,LK@19@C,LK@17@C,LK@15@C,LK@13@C,LK@11@C,LK@9@C,LK@7@C,LK@5@C,LK@3@C,LK@1@C,ZL,ZL,LK@2@C,LK@4@C,LK@6@C,LK@8@C,LK@10@C,LK@12@C,LK@14@C,LK@16@C,LK@18@C,LK@20@C,LK@22@C,LK@24@C,ZL,ZL,LK@26@C,LK@28@C,LK@30@C,LK@32@C,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "16",
+//                    "row_id": "12",
+//                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,LK@3@C,LK@1@C,ZL,ZL,LK@2@C,LK@4@C,LK@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "17",
+//                    "row_id": "13",
+//                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,A@3@C,A@1@C,ZL,ZL,A@2@C,A@4@C,A@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "18",
+//                    "row_id": "14",
+//                    "columns": "ZL,ZL,A@33@C,A@31@C,A@29@C,A@27@C,ZL,ZL,A@25@C,A@23@C,A@21@C,A@19@C,A@17@C,A@15@C,A@13@C,A@11@C,A@9@C,A@7@C,A@5@C,A@3@C,A@1@C,ZL,ZL,A@2@C,A@4@C,A@6@C,A@8@C,A@10@C,A@12@C,A@14@C,A@16@C,A@18@C,A@20@C,A@22@C,A@24@C,ZL,ZL,A@26@C,A@28@C,A@30@C,A@32@C,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "19",
+//                    "row_id": "15",
+//                    "columns": "ZL,ZL,LK@33@B,LK@31@B,LK@29@B,LK@27@B,ZL,ZL,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,ZL,ZL,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,ZL,ZL,LK@26@B,LK@28@B,LK@30@B,LK@32@B,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "20",
+//                    "row_id": "16",
+//                    "columns": "ZL,ZL,LK@33@B,LK@31@B,LK@29@B,LK@27@B,ZL,ZL,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,ZL,ZL,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,ZL,ZL,LK@26@B,LK@28@B,LK@30@B,LK@32@B,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "21",
+//                    "row_id": "17",
+//                    "columns": "ZL,ZL,LK@39@B,LK@37@B,LK@35@B,LK@33@B,LK@31@B,LK@29@B,LK@27@B,LK@25@B,LK@23@B,LK@21@B,LK@19@B,LK@17@B,LK@15@B,LK@13@B,LK@11@B,LK@9@B,LK@7@B,LK@5@B,LK@3@B,LK@1@B,LK@2@B,LK@4@B,LK@6@B,LK@8@B,LK@10@B,LK@12@B,LK@14@B,LK@16@B,LK@18@B,LK@20@B,LK@22@B,LK@24@B,LK@26@B,LK@28@B,LK@30@B,LK@32@B,LK@34@B,LK@36@B,LK@38@B,ZL,ZL"
+//                },
+//                {
+//                    "row_num": "22",
+//                    "row_id": null,
+//                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+//                }
+//
+//            ],
+//            seat_type_dict: {
+//                "A": {
+//                    "color": '#203973',
+//                    "price": "80",
+//                    "max_buy": 6
+//                },
+//                "B": {
+//                    "color": '#E914DC',
+//                    "price": "140",
+//                    "max_buy": 6
+//                },
+//                "C": {
+//                    "color": '#006CFF',
+//                    "price": "120",
+//                    "max_buy": 6
+//                },
+//                "D": {
+//                    "color": '#EAED07',
+//                    "price": "180",
+//                    "max_buy": 6
+//                },
+//                "E": {
+//                    "color": '#137313',
+//                    "price": "380",
+//                    "max_buy": 6
+//                }
+//            },
+//            dis_price_list: [
+//                {
+//                    "seat_type": "D",
+//                    "quantity": 2,
+//                    "id": "243372637",
+//                    "price": "320",
+//                    "color": "#FF0000"
+//                }, {
+//                    "seat_type": "D",
+//                    "quantity": 3,
+//                    "id": "243372637",
+//                    "price": "450",
+//                    "color": "#FF0000"
+//                }
+//            ]
+//        };
+
+        var seat_info = {
+            "seat_list": [
+                {
+                    "row_num": "1",
+                    "row_id": "1",
+                    "columns": "LK@1@A,LK@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@C,A@10@A,A@11@A,A@12@A,LK@13@A,LK@14@A,LK@15@A"
+                },
+                {
+                    "row_num": "2",
+                    "row_id": "2",
+                    "columns": "A@1@A,A@2@B,A@3@B,LK@4@B,LK@5@B,A@6@B,A@7@B,LK@8@B,LK@9@B,LK@10@B,LK@11@B,LK@12@B,LK@13@B,LK@14@B,LK@15@B"
+                },
+                {
+                    "row_num": "3",
+                    "row_id": "3",
+                    "columns": "A@1@A,A@2@B,A@3@B,LK@4@B,LK@5@B,LK@6@B,LK@7@B,LK@8@B,LK@9@B,LK@10@B,LK@11@B,LK@12@A,LK@13@A,LK@14@A,LK@15@A"
+                },
+                {
+                    "row_num": "4",
+                    "row_id": "4",
+                    "columns": "LK@1@A,LK@2@C,A@3@C,A@4@C,A@5@C,A@6@C,A@7@C,A@8@C,A@9@C,LK@10@C,LK@11@C,LK@12@C,A@13@C,A@14@C,A@15@C"
+                },
+                {
+                    "row_num": "5",
+                    "row_id": "5",
+                    "columns": "LK@1@A,LK@2@C,LK@3@C,A@4@C,A@5@C,A@6@C,A@7@C,LK@8@C,LK@9@C,A@10@C,A@11@C,A@12@C,A@13@C,A@14@C,A@15@C"
+                },
+                {
+                    "row_num": "6",
+                    "row_id": "6",
+                    "columns": "LK@1@A,LK@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "7",
+                    "row_id": "7",
+                    "columns": "A@1@A,A@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "8",
+                    "row_id": "8",
+                    "columns": "A@1@A,A@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "9",
+                    "row_id": "9",
+                    "columns": "A@1@A,A@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "10",
+                    "row_id": "10",
+                    "columns": "A@1@A,A@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "11",
+                    "row_id": "11",
+                    "columns": "A@1@A,A@2@A,A@3@A,A@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "12",
+                    "row_id": "12",
+                    "columns": "A@1@A,LK@2@A,LK@3@A,LK@4@A,A@5@A,A@6@A,A@7@A,A@8@A,A@9@A,A@10@A,A@11@A,A@12@A,A@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "13",
+                    "row_id": "13",
+                    "columns": "LK@1@A,LK@2@A,LK@3@A,LK@4@A,A@5@A,A@6@A,A@7@A,A@8@A,LK@9@A,LK@10@A,LK@11@A,LK@12@A,LK@13@A,A@14@A,A@15@A"
+                },
+                {
+                    "row_num": "14",
+                    "row_id": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                },
+                {
+                    "row_num": "15",
+                    "row_id": null,
+                    "columns": "ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL,ZL"
+                }
+            ],
+            "shipping_type_list": [
+                0,
+                1
+            ],
+            "seat_type_dict": {
+                "A": {
+                    "color": null,
+                    "price": 20,
+                    "max_buy": 2
+                },
+                "C": {
+                    "color": null,
+                    "price": 150,
+                    "max_buy": 6
+                },
+                "B": {
+                    "color": null,
+                    "price": 40,
+                    "max_buy": 6
+                }
+            },
+            "max_buy": 6,
+            "dis_price_list": [
+                {
+                    "color": null,
+                    "price": 70,
+                    "seat_type": "B",
+                    "max_buy": 4,
+                    "id": 35753292,
+                    "quantity": 2
+                },
+                {
+                    "color": null,
+                    "price": 140,
+                    "seat_type": "C",
+                    "max_buy": 6,
+                    "id": 35753303,
+                    "quantity": 2
+                }
+            ]
+        };
+
+        // 处理座位类型
+        if(seat_info.seat_type_dict){
+            for(var seat_type in seat_info.seat_type_dict) {
+                current_seat_type_list[seat_type] = {
+                    max_buy: seat_info.seat_type_dict[seat_type].max_buy,
+                    price: seat_info.seat_type_dict[seat_type].price,
+                    color: seat_info.seat_type_dict[seat_type].color,
+                    selected_seats: []
+                };
+            }
+        }
+        console.log(current_seat_type_list);
+
+        // 处理最大购买数
+        current_max_buy = seat_info.max_buy;
+
+        // 处理当前选中的优惠
+        var selected_dis_price_idx = 0;
+        var selected_dis_price = seat_info.dis_price_list[selected_dis_price_idx];
+        current_dis_price[selected_dis_price.seat_type] = $.extend({}, selected_dis_price);
+
+        // 处理座位表
+        var seat_list = seat_info.seat_list;
+        var area_list = [];
+        seat_list.forEach(function(seat_row){
+            var y_align = 20 + parseInt(seat_row.row_num) * 25;
+            var columns = seat_row.columns.split(",");
+            columns.forEach(function(column, column_idx){
+                var x_align = 20 + column_idx * 25;
+                var seat_state = 'N';
+                var seat_no = 0;
+                var seat_type = '';
+                if(column != 'ZL'){
+                    seat_state = column.split("@")[0];
+                    seat_no = column.split("@")[1];
+                    seat_type = column.split("@")[2];
+                }
+                // 	0：空，1：可售，2：锁定，3：选中（网页用）
+                var area = $.extend({}, seat_states[0]);
+                if(seat_state == 'A'){
+                    area = $.extend({}, seat_states[1]);
+                }else if (seat_state == 'LK'){
+                    area = $.extend({}, seat_states[2]);
+                }
+                area.seat_no = seat_no;
+                area.seat_type = seat_type;
+                area.seat_row = seat_row.row_num;
+                area.points = [{x: x_align, y: y_align},{x: x_align+20, y: y_align},{x: x_align+20, y: y_align+20},{x: x_align, y: y_align+20}];
+                area_list.push(area);
+            });
+        });
+        return area_list;
+    };
+
+    var load_images = function(sources, callback) {
+        var image_list = [];
+        for (var i = 0; i < sources.length; i++){
+            image_list.push(0);
+        }
+        var has_loaded = false;
+        var check_zero = function(list) {
+            return list.filter(function (item) {return item === 0;}).length == 0
+        };
+
+        sources && sources.forEach(function (src, index) {
+            var img = new Image();
+            img.src = src;
+            if (img.complete) {
+                image_list[index] = img;
+                if (!has_loaded && check_zero(image_list)) {
+                    has_loaded = true;
+                    callback(image_list);
+                    return;
+                }
+            }
+            img.onload = function () {
+                image_list[index] = img;
+                if (!has_loaded && check_zero(image_list)) {
+                    has_loaded = true;
+                    callback(image_list);
+                }
+                img.onload = null;
+            };
+            img.onerror = function () {
+                alert('资源加载失败！')
+            };
+        });
+    };
+
+    var enter_area = function(area){
+        var area_list = get_seat_list(area);
+
+        //0:背景, 1:可售, 2:锁定, 3:选中, 4:套票
+        load_images([
+            'http://m.damai.cn/images/seat/bg.png',
+            'http://m.damai.cn/images/seat/sold.png',
+            'http://m.damai.cn/images/seat/seat_lock@3x.png',
+            'http://m.damai.cn/images/seat/selected.png',
+            'http://m.damai.cn/images/seat/double.png'
+        ], function(image_list){
+            load_seat_data("onlineSeatZone", image_list, area_list);
+        });
+    };
+
+    var gen_play_info = function(){
+        // 获取场次信息
+        var play_info = {
+            "extra": "{\"area_bg\": \"http://img6.gewara.com/images/theatre/theatreroom/201508/s_6d99d7ff_14f4ac6ae4d__7adf.jpg\"}",
+            "type": "seat",
+            "id": 38116658,
+            "desc": "2017-09-11 09:47:00"
+        };
+
+        // 获取区域信息
+        var area_info = [{
+            "row_count": "20",
+            "hot_zone": "82,13 419,13 419,190 81,188",
+            "drama_id": "168323482",
+            "first_row": "1",
+            "id": 243351987,
+            "column_count": "41",
+            "first_column": "1"
+        },{
+            "row_count": "20",
+            "hot_zone": "76,261 423,264 424,465 73,465",
+            "drama_id": "168323482",
+            "first_row": "1",
+            "id": 243351988,
+            "column_count": "24",
+            "first_column": "1"
+        }];
+
+        var area_list = [];
+        area_info.forEach(function(area){
+            var points = [];
+            area.hot_zone.split(' ').forEach(function(point){
+                points.push({
+                    x: parseInt(point.split(',')[0]),
+                    y: parseInt(point.split(',')[1])
+                })
+            });
+            area_list.push({
+                color: 'FF0000',
+                state: true,
+                points: points,
+                img_id: -1
+            });
+        });
+
+        load_area_data("onlineSeatZone", area_list, JSON.parse(play_info.extra).area_bg);
+
+    };
+
+    gen_play_info();
+
+
+</script>
+
+</body>
+</html>

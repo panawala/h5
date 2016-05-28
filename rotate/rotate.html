@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>大转盘抽奖JS代码特效-JS代码网</title>
+    <meta name="viewport" content="width=320, maximum-scale=1, user-scalable=no">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta name="apple-touch-fullscreen" content="NO">
+    <link href="./rotate_files/wap_Lottery.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./rotate_files/jquery-2.1.1.min.js"></script>
+    <script>
+        $(document).ready(function (e) {
+            var prizeLength = $(".prize").length;
+            $(".lotCenter").click(function () {
+                $(".lotCenter").addClass("lotCenter-animation-forever");
+                $(".lotLight").removeClass("lotLight-animation2").addClass("lotLight-animation1");
+                setTimeout(function () {
+                    //最终中奖奖品位置1-6
+                    var prizeIndex = 3;
+                    if (prizeLength < prizeIndex) {
+                        alert("奖品不存在")
+                    }
+                    $(".lotCenter").removeClass("lotCenter-animation-forever");
+                    $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation2");
+                    $(".lotCenter").addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
+
+                }, 6000);
+                setTimeout(function () {
+                    $("#msgupdata").fadeIn(300);
+                }, 16000);
+            });
+            var fanAngle = 360 / prizeLength;
+            for (var i = 1; i <= prizeLength; i++) {
+                var numAngle = fanAngle * i - fanAngle;
+                var prizeAngle = 0;
+                if (prizeLength == 6) {
+                    prizeAngle = i * fanAngle + fanAngle;
+                }
+                if (prizeLength == 5) {
+                    prizeAngle = i * fanAngle + 54;
+                    $(".prize1 .prizebg").css("background", "#fcb600");
+                    $(".prize2 .prizebg").css("background", "#f28501");
+                    $(".prize3 .prizebg").css("background", "#f9a700");
+                    $(".prize4 .prizebg").css("background", "#f69601");
+                    $(".prize5 .prizebg").css("background", "#fec000");
+                }
+                if (prizeLength == 4) {
+                    prizeAngle = i * fanAngle + 45;
+                }
+                if (prizeLength == 3) {
+                    prizeAngle = i * fanAngle + fanAngle + 30;
+                    $(".prize1 .prizebg").css("background", "#fcb600");
+                    $(".prize2 .prizebg").css("background", "#f28501");
+                    $(".prize3 .prizebg").css("background", "#f9a700");
+                }
+                if (prizeLength == 2) {
+                    prizeAngle = i * fanAngle + fanAngle;
+                }
+                var complementaryAngle = 90 - fanAngle;
+                $(".img" + i).css("transform", "rotate(" + numAngle + "deg)");
+                $(".txt" + i).css("transform", "rotate(" + numAngle + "deg)");
+                $(".prize" + i).css("transform", "rotate(" + prizeAngle + "deg)");
+                $(".prizebg").css("transform", "rotate(" + complementaryAngle + "deg)");
+            }
+        });
+
+        function msgclose() {
+            $('.loginForm').fadeOut(300);
+        }
+        function msgupdata() {
+            $("#msgupdata").hide();
+            $("#msgend").fadeIn(300);
+        }
+    </script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="container">
+        <div id="main">
+            <div class="lotteryTitle">幸福大转盘</div>
+            <div id="lottery">
+                <div class="lotBg">
+                    <ul class="lotLight lotLight-animation2">
+                        <li class="lotLight1"><i></i></li>
+                        <li class="lotLight2"><i></i></li>
+                        <li class="lotLight3"><i></i></li>
+                        <li class="lotLight4"><i></i></li>
+                        <li class="lotLight5"><i></i></li>
+                        <li class="lotLight6"><i></i></li>
+                        <li class="lotLight7"><i></i></li>
+                        <li class="lotLight8"><i></i></li>
+                        <li class="lotLight9"><i></i></li>
+                        <li class="lotLight10"><i></i></li>
+                        <li class="lotLight11"><i></i></li>
+                        <li class="lotLight12"><i></i></li>
+                        <li class="lotLight13"><i></i></li>
+                        <li class="lotLight14"><i></i></li>
+                        <li class="lotLight15"><i></i></li>
+                        <li class="lotLight16"><i></i></li>
+                        <li class="lotLight17"><i></i></li>
+                        <li class="lotLight18"><i></i></li>
+                        <li class="lotLight19"><i></i></li>
+                        <li class="lotLight20"><i></i></li>
+                        <li class="lotLight21"><i></i></li>
+                        <li class="lotLight22"><i></i></li>
+                        <li class="lotLight23"><i></i></li>
+                        <li class="lotLight24"><i></i></li>
+                        <li class="lotLight25"><i></i></li>
+                        <li class="lotLight26"><i></i></li>
+                        <li class="lotLight27"><i></i></li>
+                        <li class="lotLight28"><i></i></li>
+                        <li class="lotLight29"><i></i></li>
+                        <li class="lotLight30"><i></i></li>
+                        <li class="lotLight31"><i></i></li>
+                        <li class="lotLight32"><i></i></li>
+                        <li class="lotLight33"><i></i></li>
+                        <li class="lotLight34"><i></i></li>
+                        <li class="lotLight35"><i></i></li>
+                        <li class="lotLight36"><i></i></li>
+                    </ul>
+                    <div class="lotFan">
+                        <div class="prize prize1" style="transform: rotate(120deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                        <div class="prize prize2" style="transform: rotate(180deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                        <div class="prize prize3" style="transform: rotate(240deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                        <div class="prize prize4" style="transform: rotate(300deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                        <div class="prize prize5" style="transform: rotate(360deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                        <div class="prize prize6" style="transform: rotate(420deg);">
+                            <div class="prizebg" style="transform: rotate(30deg);"></div>
+                        </div>
+                    </div>
+                    <div class="lotTxt">
+                        <p class="txt1" style="transform: rotate(0deg);"><span>一等奖</span></p>
+
+                        <p class="txt2" style="transform: rotate(60deg);"><span>二等奖</span></p>
+
+                        <p class="txt3" style="transform: rotate(120deg);"><span>三等奖</span></p>
+
+                        <p class="txt4" style="transform: rotate(180deg);"><span>四等奖</span></p>
+
+                        <p class="txt5" style="transform: rotate(240deg);"><span>五等奖</span></p>
+
+                        <p class="txt6" style="transform: rotate(300deg);"><span>六等奖</span></p>
+                    </div>
+                    <div class="lotImg">
+                        <p class="img1" style="transform: rotate(0deg);"><img src="./rotate_files/2011050210463931.png">
+                        </p>
+
+                        <p class="img2" style="transform: rotate(60deg);"><img src="./rotate_files/TV.png"></p>
+
+                        <p class="img3" style="transform: rotate(120deg);"><img
+                                src="./rotate_files/2011050210463931.png"></p>
+
+                        <p class="img4" style="transform: rotate(180deg);"><img
+                                src="./rotate_files/2011050210463931.png"></p>
+
+                        <p class="img5" style="transform: rotate(240deg);"><img src="./rotate_files/TV.png"></p>
+
+                        <p class="img6" style="transform: rotate(300deg);"><img src="./rotate_files/TV.png"></p>
+                    </div>
+                    <div class="lotCenter">
+                        <i></i>
+                        <a href="javascript:void(0)"><span>开始<br>抽奖</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lotterynum" style="margin-left: 35.1562px; margin-right: 35.1562px;">
+                活动说明:活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活动说明活
+            </div>
+
+            <div id="msgupdata" class="loginForm dn">
+                <ul class="sOne-loginForm">
+                    <li>
+                        <p>恭喜您，获得六等奖（奖品：Ipad一部）</p>
+                    </li>
+                    <li>
+                        <input type="text" class="sOne-loginInput-half" name="" placeholder="请输入您的手机号">
+                        <input type="button" class="sOne-getpasscode" value="获取动态密码" id="getpasscode" data-href="">
+                        <span class="dn">手机号错误</span>
+                    </li>
+                    <li class="bd-b">
+                        <input type="password" class="sOne-loginInput" name="passwd" placeholder="动态密码">
+                        <span class="dn">动态密码错误</span>
+                    </li>
+                    <li>
+                        <input type="text" class="sOne-loginInput-half" name="" placeholder="输入验证码">
+                        <img src="http://www.js-css.cn/jscode/award/award3/" class="sOne-loginInput-code">
+                        <span class="dn">验证码错误</span>
+                    </li>
+                    <li>
+                        <input type="submit" name="doSubmit" class="sOne-loginInput-btn" value="领取"
+                               onclick="msgupdata()">
+                    </li>
+                </ul>
+                <div class="fn"><a href="javascript:void(0)" class="close-loginForm" onclick="msgclose()">+</a></div>
+            </div>
+
+            <div id="msgend" class="loginForm dn">
+                <ul class="sOne-loginForm">
+                    <li>
+                        <p>领取成功</p>
+                    </li>
+                </ul>
+                <div class="fn"><a href="javascript:void(0)" class="close-loginForm" onclick="msgclose()">+</a></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<section style="display: none;" class="fullHtml loadingBox" id="loadingBox">
+    <i></i>
+    <span>加载中...</span>
+</section>
+
+</body>
+</html>

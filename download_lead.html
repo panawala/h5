@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Let's Go</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://m.xmonster.cn/static/m-build/css/go-reason.css?v=285b93b0a39c0dd1c990878a05899243">
+    <link rel="stylesheet" type="text/css" href="build/css/gmu-slider.min.css">
+    <style type="text/css">
+        html, body{
+            margin: 0;
+            padding: 0;
+            background-color: #FFFFFF;
+        }
+
+        .container{
+            padding: 10px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background-color: #FFF;
+        }
+
+        .title {
+            text-align: center;
+        }
+        .title .hot{
+            width: 110px;
+            text-align: center;
+            margin: 0 auto;
+            border-bottom: 1px solid #9B9B9B;
+            padding: 15px 0 5px 0;
+            font-weight: bold;
+            font-size: large;
+        }
+        .title .trend{
+            padding: 8px 0;
+            color: #9B9B9B;
+        }
+        .title .sub-title{
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+        .arrow-down {
+            width:0;
+            height:0;
+            border-left:6px solid transparent;
+            border-right:6px solid transparent;
+            border-top:6px solid #9B9B9B;
+            margin: 0 auto;
+        }
+
+        .app-store{
+            width: 243px;
+            margin: 0 auto;
+            height: 45px;
+            display: block;
+            text-align: center;
+            text-decoration: blink;
+            line-height: 45px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            background-color: #D94846;
+            background-size: 243px 45px;
+            background-repeat: no-repeat;
+        }
+
+        a.app-store:link {
+            color: #ffffff;
+        }
+        a.app-store:visited {
+            color: #ffffff;
+        }
+        a.app-store:hover {
+            color: #ffffff;
+        }
+        a.app-store:active {
+            color: #ffffff;
+        }
+    </style>
+    <script type="text/javascript" src="static/js/vendor/zepto.js"></script>
+    <script type="text/javascript" src="build/js/gmu-slider.min.js"></script>
+
+</head>
+<body>
+    <div class="title">
+        <p class="hot">全城最热活动</p>
+        <div class="arrow-down">
+        </div>
+        <p class="trend">TRENDING</p>
+    </div>
+    <div id="slider">
+        <div>
+            <a href="javascript:void(0);"><img lazyload="/h5/static/images/image1.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image2.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image3.png"></a>
+        </div>
+        <div>
+            <a href="javascript:void(0);"><img lazyload="static/images/image4.png"></a>
+        </div>
+    </div>
+
+    <div class="title">
+        <p class="sub-title">还有341个活动等你走起~</p>
+    </div>
+
+    <div class="container">
+        <a id="app-store" class="app-store" href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xmonster.letsgo">
+            去应用商店下载
+        </a>
+    </div>
+
+    <div class="container">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/29257c7a-5c68-11e5-afc1-00163e002e64.png">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/29459b68-5c68-11e5-afc1-00163e002e64.png">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/29321872-5c68-11e5-afc1-00163e002e64.png">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/290c5a56-5c68-11e5-afc1-00163e002e64.png">
+        <img src="http://7tszlo.com1.z0.glb.clouddn.com/28f6f382-5c68-11e5-afc1-00163e002e64.png">
+    </div>
+
+    <script>
+        //创建slider组件
+        var slider = new gmu.Slider($('#slider'), { imgZoom: false });
+        //    $('#slider').slider( { imgZoom: false });
+    </script>
+
+</body>
+</html>

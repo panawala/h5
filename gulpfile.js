@@ -1,4 +1,3 @@
-
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -6,6 +5,10 @@ var imagemin = require('gulp-imagemin');
 var sourcemaps = require('gulp-sourcemaps');
 var minifycss = require('gulp-minify-css');
 var del = require('del');
+var autoprefixer = require('gulp-autoprefixer');
+var sass = require('gulp-sass');
+var less = require('gulp-less');
+
 
 var paths = {
     scripts: ['static/js/**/*.js', '!static/js/vendor/*.js'],
@@ -28,17 +31,23 @@ var paths = {
         'static/css/gmu/slider.css',
         'static/css/gmu/slider.default.css'
     ],
+    rotate_scss: [
+        'rotate/rotate_files/test.scss'
+    ],
+    rotate_less: [
+        'rotate/rotate_files/*.less'
+    ],
     images: 'static/images/**/*'
 };
 
 // Not all tasks need to use streams
 // A gulpfile is just another node program and you can use all packages available on npm
-gulp.task('clean', function(cb) {
+gulp.task('clean', function (cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
     del(['build'], cb);
 });
 
-gulp.task('scripts', ['clean'], function() {
+gulp.task('scripts', ['clean'], function () {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     return gulp.src(paths.scripts)
@@ -50,14 +59,14 @@ gulp.task('scripts', ['clean'], function() {
 });
 
 // Copy all static images
-gulp.task('images', ['clean'], function() {
+gulp.task('images', ['clean'], function () {
     return gulp.src(paths.images)
         // Pass in options to the task
         .pipe(imagemin({optimizationLevel: 5}))
         .pipe(gulp.dest('build/images'));
 });
 
-gulp.task('gmu-scripts', ['clean'], function() {
+gulp.task('gmu-scripts', ['clean'], function () {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     return gulp.src(paths.gmu_scripts)
@@ -65,7 +74,7 @@ gulp.task('gmu-scripts', ['clean'], function() {
         .pipe(concat('gmu-slider.min.js'))
         .pipe(gulp.dest('build/js'));
 });
-gulp.task('gmu-css', ['clean'], function() {
+gulp.task('gmu-css', ['clean'], function () {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     return gulp.src(paths.gmu_css)
@@ -74,11 +83,46 @@ gulp.task('gmu-css', ['clean'], function() {
         .pipe(gulp.dest('build/css'));
 });
 
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-    gulp.watch(paths.scripts, ['scripts']);
-    gulp.watch(paths.images, ['images']);
+gulp.task('rotate', ['clean'], function () {
+    return gulp.src(paths.rotate_scss)
+        .pipe(sass())
+        .pipe(autoprefixer({
+            browsers: [
+                'last 2 versions',
+                'safari 5',
+                'ios 6',
+                'android 4'
+            ],
+            cascade: true
+        }))
+        .pipe(gulp.dest('rotate/build'));
 });
+
+gulp.task('less', ['clean'], function () {
+    gulp.src(['rotate/rotate_files/*.less']) //多个文件以数组形式传入
+        .pipe(less())
+        .pipe(autoprefixer({
+            browsers: [
+                'last 2 versions',
+                'safari 5',
+                'ios 6',
+                'android 4'
+            ],
+            cascade: true
+        }))
+        .pipe(gulp.dest('rotate/build')); //将会在src/css下生成index.css以及detail.css
+});
+
+// Rerun the task when a file changes
+//gulp.task('watch', function () {
+//    gulp.watch(paths.scripts, ['scripts']);
+//    gulp.watch(paths.images, ['images']);
+//});
+
+gulp.task('watch', function () {
+    gulp.watch(paths.rotate_less, ['less']);
+});
+
 
 // The default task (called when you run `gulp` from cli)
 //gulp.task('default', ['watch', 'gmu-scripts', 'scripts', 'images']);

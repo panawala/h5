@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>男神</title>
+    <style type="text/css">
+        html, body{
+            margin: 0;
+            padding: 0;
+        }
+        p {
+            text-align: center;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        span {
+            font-size: 16px;
+            color: #333333;
+        }
+        input {
+            font-size: 16px;
+            color: #979797;
+            outline: none;
+            -webkit-appearance: none;
+            border-radius: 3px;
+            height: 30px;
+            border: 1px solid #979797;
+            padding: 0 10px;
+            margin: 0 0 0 5px;
+        }
+        .imagelist{
+            text-align: center;
+        }
+        .imagelist img{
+            width: 90%;
+            margin-top: 10px;
+        }
+
+        .baoming{
+            text-align: center;
+            height: 50px;
+        }
+        .baoming img{
+            height: 100%;
+        }
+        button{
+            width: 80%;
+            height: 40px;
+            outline: none;
+            border-radius: 3px;
+            -webkit-appearance: none;
+            color: #fff;
+            font-size: 18px;
+            background-color: #d94648;
+            border: 0;
+            margin: 20px;
+        }
+
+        .zhuanfa_img{
+            text-align: center;
+        }
+        .zhuanfa_img img{
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        a{
+            display: inline-block;
+            line-height: 40px;
+            height: 40px;
+            text-decoration: none;
+            outline: none;
+            border-radius: 5px;
+            -webkit-appearance: none;
+            color: #fff;
+            font-size: 18px;
+            background-color: #333333;
+            border: 0;
+            margin: 20px;
+            padding: 0 30px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="imagelist page1">
+        <img src="static/images/Group.png" />
+    </div>
+    <div class="baoming page1">
+        <img src="static/images/baoming.png">
+    </div>
+    <p class="page1">
+        <span>我要点他</span>
+        <input id="no" name="no" type="tel" placeholder="填写心仪男神编号">
+    </p>
+    <p class="page1">
+        <span>我的姓名</span>
+        <input id="name" name="name" type="text" placeholder="填写姓名">
+    </p>
+    <p class="page1">
+        <span>联系手机</span>
+        <input id="mobile" name="mobile" type="tel" placeholder="手机号仅用于本次报名">
+    </p>
+    <p class="page1">
+        <button onclick="submit_form();">就要他了</button>
+    </p>
+
+    <div class="zhuanfa_img page2">
+        <img src="static/images/zhuanfa.png" />
+    </div>
+    <p class="page2">
+        <a href="comment_list.html">点击下载</a>
+    </p>
+    <script type="application/javascript" src="static/js/vendor/zepto.js"></script>
+    <script type="application/javascript">
+        var submit_form = function(){
+            if(!$('#no').val()){
+                alert('请填写男神编号');
+                return;
+            }
+            if(!$('#name').val()){
+                alert('请填写你的姓名');
+                return;
+            }
+            if(!$('#mobile').val()){
+                alert('请填写手机号');
+                return;
+            }
+            $('.page1').hide();
+            $('.page2').show();
+            $(document.body).css({backgroundColor: '#D94648'});
+        };
+        $(document.body).css({backgroundColor: '#F8F8F8'});
+        $('.page1').show();
+        $('.page2').hide();
+    </script>
+</body>
+</html>
