@@ -618,16 +618,20 @@ body {
 }
 
 .keyframes (@name, @fromRules, @toRules) {
-  @-webkit-keyframes ~ '@{name}' {
-    0% { @fromRules();
+  @-webkit-keyframes ~'@{name}' {
+    0% {
+      @fromRules();
     }
-    100% { @toRules();
+    100% {
+      @toRules();
     }
   }
-  @keyframes ~ '@{name}' {
-    0% { @fromRules();
+  @keyframes ~'@{name}' {
+    0% {
+      @fromRules();
     }
-    100% { @toRules();
+    100% {
+      @toRules();
     }
   }
 }
@@ -637,13 +641,15 @@ body {
 .generate-lot-center(@n, @i: 1) when (@i =< @n) {
 
   // 此处使用单引号，可以相当于字符串相加
-  .keyframes('lotCenter6-@{i}', { -webkit-transform: rotate(0deg); },
-  { -webkit-transform: rotate(3600deg + (@i - 1) * 60deg); });
+  .keyframes('lotCenter6-@{i}', { -webkit-transform: rotate(0deg); }, { -webkit-transform: rotate(3600deg + (@i - 1) * 60deg); });
 
-  // 此处声明变量，转啊转。。
-  @lotCenter6: ~'lotCenter6-@{i}';
+  // 此处声明变量，很难受。。
+  //@lotCenter6: ~'lotCenter6-@{i}';
+  //.lotCenter-animation6-@{i} {
+  //  -webkit-animation: ~'@{lotCenter6}' (3600s + (@i - 1) * 60s)/1200 linear 0s forwards;
+  //}
   .lotCenter-animation6-@{i} {
-    -webkit-animation: ~'@{lotCenter6}' (3600s + (@i - 1) * 60s)/1200 linear 0s forwards;
+    -webkit-animation: ~'lotCenter6-@{i}' (3600s + (@i - 1) * 60s)/1200 linear 0s forwards;
   }
 
   .generate-lot-center(@n, (@i + 1));

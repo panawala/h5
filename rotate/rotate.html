@@ -11,14 +11,19 @@
     <!--<link href="./rotate_files/wap_Lottery.css" rel="stylesheet" type="text/css">-->
     <link href="./rotate_files/test_less.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="./rotate_files/jquery-2.1.1.min.js"></script>
+    <!--<script type="text/javascript" src="../static/js/vendor/zepto.js"></script>-->
     <script>
 
         var prizeLength = 6;
         var prizeIndex = 0;
 
         var resetPrize = function () {
-            $("#lotCenter").removeClass().addClass("lotCenter");
-            $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation-normal");
+            $("#lotCenter")
+                    .removeClass()
+                    .addClass("lotCenter");
+            $(".lotLight")
+                    .removeClass("lotLight-animation1")
+                    .addClass("lotLight-animation-normal");
             prizeIndex = 0;
         };
 
@@ -30,13 +35,19 @@
 
         var beginFetchPrize = function () {
             $("#lotCenter").addClass("lotCenter-animation-fast");
-            $(".lotLight").removeClass("lotLight-animation-normal").addClass("lotLight-animation1");
+            $(".lotLight")
+                    .removeClass("lotLight-animation-normal")
+                    .addClass("lotLight-animation1");
         };
 
         var endFetchPrize = function (cb) {
-            $("#lotCenter").removeClass("lotCenter-animation-fast").addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
+            $("#lotCenter")
+                    .removeClass("lotCenter-animation-fast")
+                    .addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
             setTimeout(function () {
-                $(".lotLight").removeClass("lotLight-animation1").addClass("lotLight-animation-normal");
+                $(".lotLight")
+                        .removeClass("lotLight-animation1")
+                        .addClass("lotLight-animation-normal");
             }, 3000);
             setTimeout(function () {
                 cb && cb();
