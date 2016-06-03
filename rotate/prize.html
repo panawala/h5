@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>大转盘抽奖JS代码特效-JS代码网</title>
+    <meta name="viewport" content="width=320, maximum-scale=1, user-scalable=no">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta name="apple-touch-fullscreen" content="NO">
+    <link href="./rotate_files/prize.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="./rotate_files/jquery-2.1.1.min.js"></script>
+    <script>
+
+        var prizeLength = 6;
+        var prizeIndex = 0;
+
+        var resetPrize = function () {
+            $("#lotCenter")
+                    .removeClass()
+                    .addClass("lotCenter");
+            $(".lotLight")
+                    .removeClass("lotLight-animation1")
+                    .addClass("lotLight-animation-normal");
+            prizeIndex = 0;
+        };
+
+        var fetchPrize = function () {
+            setTimeout(function () {
+                prizeIndex = 4;
+            }, 2000);
+        };
+
+        var beginFetchPrize = function () {
+            $("#lotCenter").addClass("lotCenter-animation-fast");
+            $(".lotLight")
+                    .removeClass("lotLight-animation-normal")
+                    .addClass("lotLight-animation1");
+        };
+
+        var endFetchPrize = function (cb) {
+            $("#lotCenter")
+                    .removeClass("lotCenter-animation-fast")
+                    .addClass("lotCenter-animation" + prizeLength + "-" + prizeIndex);
+            setTimeout(function () {
+                $(".lotLight")
+                        .removeClass("lotLight-animation1")
+                        .addClass("lotLight-animation-normal");
+            }, 3000);
+            setTimeout(function () {
+                cb && cb();
+            }, 4000);
+        };
+
+        var initLottery = function () {
+            var fanAngle = 360 / prizeLength;
+            for (var i = 1; i <= prizeLength; i++) {
+                var numAngle = fanAngle * i - fanAngle;
+                var prizeAngle = 0;
+                if (prizeLength == 6) {
+                    prizeAngle = i * fanAngle + fanAngle;
+                }
+                if (prizeLength == 5) {
+                    prizeAngle = i * fanAngle + 54;
+                    $(".prize1 .prizebg").css("background", "#fcb600");
+                    $(".prize2 .prizebg").css("background", "#f28501");
+                    $(".prize3 .prizebg").css("background", "#f9a700");
+                    $(".prize4 .prizebg").css("background", "#f69601");
+                    $(".prize5 .prizebg").css("background", "#fec000");
+                }
+                if (prizeLength == 4) {
+                    prizeAngle = i * fanAngle + 45;
+                }
+                if (prizeLength == 3) {
+                    prizeAngle = i * fanAngle + fanAngle + 30;
+                    $(".prize1 .prizebg").css("background", "#fcb600");
+                    $(".prize2 .prizebg").css("background", "#f28501");
+                    $(".prize3 .prizebg").css("background", "#f9a700");
+                }
+                if (prizeLength == 2) {
+                    prizeAngle = i * fanAngle + fanAngle;
+                }
+                var complementaryAngle = 90 - fanAngle;
+                $(".img" + i).css("transform", "rotate(" + numAngle + "deg)");
+                $(".txt" + i).css("transform", "rotate(" + numAngle + "deg)");
+                $(".prize" + i).css("transform", "rotate(" + prizeAngle + "deg)");
+                $(".prizebg").css("transform", "rotate(" + complementaryAngle + "deg)");
+            }
+        };
+
+        var msgclose = function () {
+            $('.loginForm').fadeOut(300);
+        };
+        var msgupdata = function () {
+            $("#msgupdata").hide();
+            $("#msgend").fadeIn(300);
+        };
+
+        $(document).ready(function (e) {
+            initLottery();
+            $("#lotCenter").click(function () {
+                beginFetchPrize();
+                fetchPrize();
+
+                setTimeout(function () {
+                    endFetchPrize(function () {
+                        $("#msgupdata").fadeIn(300);
+                    });
+                }, 4000);
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <img src="http://7tszlo.com1.z0.glb.clouddn.com/4f619220-264d-11e6-9102-00163e002e64.png">
+</div>
+
+<div id="lottery">
+    <div class="lotBg">
+        <ul class="lotLight lotLight-animation-normal">
+            <li class="lotLight1"><i></i></li>
+            <li class="lotLight2"><i></i></li>
+            <li class="lotLight3"><i></i></li>
+            <li class="lotLight4"><i></i></li>
+            <li class="lotLight5"><i></i></li>
+            <li class="lotLight6"><i></i></li>
+            <li class="lotLight7"><i></i></li>
+            <li class="lotLight8"><i></i></li>
+            <li class="lotLight9"><i></i></li>
+            <li class="lotLight10"><i></i></li>
+            <li class="lotLight11"><i></i></li>
+            <li class="lotLight12"><i></i></li>
+            <li class="lotLight13"><i></i></li>
+            <li class="lotLight14"><i></i></li>
+            <li class="lotLight15"><i></i></li>
+            <li class="lotLight16"><i></i></li>
+            <li class="lotLight17"><i></i></li>
+            <li class="lotLight18"><i></i></li>
+            <li class="lotLight19"><i></i></li>
+            <li class="lotLight20"><i></i></li>
+            <li class="lotLight21"><i></i></li>
+            <li class="lotLight22"><i></i></li>
+            <li class="lotLight23"><i></i></li>
+            <li class="lotLight24"><i></i></li>
+            <li class="lotLight25"><i></i></li>
+            <li class="lotLight26"><i></i></li>
+            <li class="lotLight27"><i></i></li>
+            <li class="lotLight28"><i></i></li>
+            <li class="lotLight29"><i></i></li>
+            <li class="lotLight30"><i></i></li>
+            <li class="lotLight31"><i></i></li>
+            <li class="lotLight32"><i></i></li>
+            <li class="lotLight33"><i></i></li>
+            <li class="lotLight34"><i></i></li>
+            <li class="lotLight35"><i></i></li>
+            <li class="lotLight36"><i></i></li>
+        </ul>
+        <div class="lotFan">
+            <div class="prize prize1" style="transform: rotate(120deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+            <div class="prize prize2" style="transform: rotate(180deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+            <div class="prize prize3" style="transform: rotate(240deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+            <div class="prize prize4" style="transform: rotate(300deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+            <div class="prize prize5" style="transform: rotate(360deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+            <div class="prize prize6" style="transform: rotate(420deg);">
+                <div class="prizebg" style="transform: rotate(30deg);"></div>
+            </div>
+        </div>
+        <div class="lotTxt">
+            <p class="txt1" style="transform: rotate(0deg);"><span>一等奖</span></p>
+
+            <p class="txt2" style="transform: rotate(60deg);"><span>二等奖</span></p>
+
+            <p class="txt3" style="transform: rotate(120deg);"><span>三等奖</span></p>
+
+            <p class="txt4" style="transform: rotate(180deg);"><span>四等奖</span></p>
+
+            <p class="txt5" style="transform: rotate(240deg);"><span>五等奖</span></p>
+
+            <p class="txt6" style="transform: rotate(300deg);"><span>六等奖</span></p>
+        </div>
+        <div class="lotImg">
+            <p class="img1" style="transform: rotate(0deg);">
+                <img src="http://7tszlo.com1.z0.glb.clouddn.com/7e9c6cc2-264d-11e6-9102-00163e002e64.png">
+            </p>
+
+            <p class="img2" style="transform: rotate(60deg);">
+                <img src="http://7tszlo.com1.z0.glb.clouddn.com/7ea8684c-264d-11e6-9102-00163e002e64.png">
+            </p>
+
+            <p class="img3" style="transform: rotate(120deg);">
+                <img src="http://7tszlo.com1.z0.glb.clouddn.com/7eb2a78a-264d-11e6-9102-00163e002e64.png">
+            </p>
+
+            <p class="img4" style="transform: rotate(180deg);"><img
+                    src="http://7tszlo.com1.z0.glb.clouddn.com/7ec11c48-264d-11e6-9102-00163e002e64.png"></p>
+
+            <p class="img5" style="transform: rotate(240deg);"><img src="http://7tszlo.com1.z0.glb.clouddn.com/7eceeae4-264d-11e6-9102-00163e002e64.png"></p>
+
+            <p class="img6" style="transform: rotate(300deg);"><img src="http://7tszlo.com1.z0.glb.clouddn.com/7ed46bea-264d-11e6-9102-00163e002e64.png"></p>
+        </div>
+        <div id="lotCenter" class="lotCenter">
+            <i></i>
+            <a href="javascript:void(0)"><span>开始<br>抽奖</span></a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="chance-text">当前你还剩<span class="count">2</span>次抽奖机会</div>
+</div>
+
+<div class="marquee lotterynum">
+    <div>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+        <p>活动说明:活动说明活动说明活动说明活动说明活动说</p>
+    </div>
+</div>
+
+
+</body>
+</html>
