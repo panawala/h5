@@ -83,21 +83,6 @@ gulp.task('gmu-css', ['clean'], function () {
         .pipe(gulp.dest('build/css'));
 });
 
-gulp.task('rotate', ['clean'], function () {
-    return gulp.src(paths.rotate_scss)
-        .pipe(sass())
-        .pipe(autoprefixer({
-            browsers: [
-                'last 2 versions',
-                'safari 5',
-                'ios 6',
-                'android 4'
-            ],
-            cascade: true
-        }))
-        .pipe(gulp.dest('rotate/build'));
-});
-
 
 
 gulp.task('less-clean', function (cb) {
