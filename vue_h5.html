@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>水枪大战预约</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script type="application/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            -webkit-user-select: none;
+        }
+
+        .body-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 888;
+            background-color: rgba(0, 0, 0, 0.6);
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mask {
+            z-index: 999;
+            min-height: 100px;
+            background-color: #fff;
+            width: 80%;
+        }
+
+        .mask .mask-title {
+            height: 40px;
+            width: 100%;
+            background-color: #d94648;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .mask .mask-body {
+            color: #5AC7D4;
+            overflow-y: auto;
+            box-sizing: border-box;
+            max-height: 400px;
+            position: relative;
+            background-color: #fff;
+            margin: 20px;
+        }
+
+        .mask .mask-body ul {
+            list-style: none;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #461D01;
+        }
+
+        .mask .mask-body ul li {
+            padding: 5px;
+        }
+
+        .wrapper {
+            margin: 0 auto;
+            text-align: center;
+            padding: 60px 0 0 0;
+        }
+
+        .wrapper .input {
+            display: block;
+            -webkit-appearance: none;
+            border: 1px solid #979797;
+            margin: 10px auto;
+            height: 40px;
+            line-height: 40px;
+            width: 250px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .wrapper .btn {
+            border: 0;
+            margin: 10px auto;
+            height: 40px;
+            width: 250px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #d94648;
+            color: #fff;
+        }
+
+        .play {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            box-sizing: border-box;
+            justify-content: center;
+            background-color: #d94648;
+            color: #fff;
+            padding: 10px 0;
+            text-decoration: none;
+        }
+
+        .calender {
+            width: 20px;
+            height: 20px;
+        }
+
+        .arrow {
+            width: 14px;
+            height: 8px;
+        }
+
+        .play .text {
+            font-size: 14px;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <template v-if="stage==0">
+        <div>loading...</div>
+    </template>
+    <template v-if="stage==1">
+        <div class="wrapper">
+            <input class="input" type="text" v-model="mobile" placeholder="输入你的手机号">
+            <input class="input" type="text" v-model="check_pass" placeholder="输入你的眼票码">
+            <button class="btn" @click="next">下一步</button>
+        </div>
+    </template>
+
+    <template v-if="stage==2">
+        <a class="play" href="javascript:void(0);" @click="show_plays()">
+            <img class="calender" src="http://7tszlo.com1.z0.glb.clouddn.com/527a18b6-2b01-11e6-b230-00163e002e64.png"/>
+            <span class="text">{{ selected_play.date }}</span>
+            <img class="arrow" src="http://7tszlo.com1.z0.glb.clouddn.com/a9bde5f8-2b01-11e6-b230-00163e002e64.png"/>
+        </a>
+
+        <div v-show="body_mask" class='body-mask'>
+            <div class='mask'>
+                <div class='mask-title'>可选日期</div>
+                <div class='mask-body'>
+                    <ul>
+                        <li @click="select_play($index, play)" v-for="play in plays">
+                            {{ play.date }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <a href="javascript:void(0);">{{ selected_appointment.time }}</a>
+        <ul>
+            <li @click="select_appointment($index, appointment)" v-for="appointment in appointments" track-by="id">
+                {{ appointment.time }}
+            </li>
+        </ul>
+        <button @click="submit">提交</button>
+    </template>
+
+</div>
+
+<script type="application/javascript" src="static/js/vendor/zepto.js"></script>
+
+<script>
+    var plays = [{
+        id: 1,
+        date: '06-25 周六'
+    }, {
+        id: 2,
+        date: '06-26 周日'
+    }, {
+        id: 3,
+        date: '06-27 周一'
+    }, {
+        id: 4,
+        date: '06-28 周二'
+    }]
+    var appointments = [{
+        id: 1,
+        time: '10:00 - 12:00',
+        available_count: 200,
+        used_count: 5
+    }, {
+        id: 2,
+        time: '12:00 - 14:00',
+        available_count: 200,
+        used_count: 2
+    }, {
+        id: 3,
+        time: '16:00 - 18:00',
+        available_count: 200,
+        used_count: 200
+    }]
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            stage: 0,
+            selected_play: {},
+            selected_appointment: {},
+            body_mask: false
+        },
+        methods: {
+            select_play: function (index, play) {
+                this.selected_play = play
+                this.body_mask = false
+            },
+            select_appointment: function (index, appointment) {
+                this.selected_appointment = appointment
+            },
+            show_plays: function () {
+                this.body_mask = true
+            },
+            next: function () {
+                setStage2()
+            },
+            submit: function () {
+                alert('提交')
+            }
+        }
+    })
+
+
+    var setStage2 = function () {
+        vm.stage = 0
+        setTimeout(function () {
+            vm.stage = 2
+            vm.plays = plays;
+            vm.selected_play = plays[1]
+            vm.appointments = appointments
+            vm.selected_appointment = appointments[2]
+        }, 200)
+    }
+
+    var getInitState = function () {
+        setTimeout(function () {
+            vm.stage = 1
+            vm.mobile = '232323222222'
+        }, 200)
+    }
+    getInitState()
+
+
+    var show_mask = function (title, content) {
+        $('.body-mask') && $('.body-mask').remove();
+        var hide_this = 'javascript:this.style.display="none"';
+        var mask_html = "<div class='body-mask' onclick=" + hide_this + ">" +
+                "<div class='mask'>" +
+                "<div class='mask-title'>" + title + "</div>" +
+                "<div class='mask-body'>" + content + "</div>" +
+                "</div>" +
+                "</div>";
+        $('body').append(mask_html);
+    };
+
+</script>
+
+</body>
+</html>
