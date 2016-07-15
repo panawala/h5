@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>水枪大战预约</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script type="application/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            -webkit-user-select: none;
+        }
+
+        .body-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 888;
+            background-color: rgba(0, 0, 0, 0.6);
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mask {
+            z-index: 999;
+            min-height: 100px;
+            background-color: #fff;
+            width: 80%;
+        }
+
+        .mask .mask-title {
+            height: 40px;
+            width: 100%;
+            background-color: #d94648;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .mask .mask-body {
+            color: #5AC7D4;
+            overflow-y: auto;
+            box-sizing: border-box;
+            max-height: 400px;
+            position: relative;
+            background-color: #fff;
+            margin: 20px;
+        }
+
+        .mask .mask-body ul {
+            list-style: none;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #461D01;
+        }
+
+        .mask .mask-body ul li {
+            padding: 5px;
+        }
+
+        /* hide input */
+        input.radio:empty {
+            display: none;
+        }
+
+        /* default */
+        input.radio:empty ~ div:before {
+            content: '';
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-image: url('http://7tszlo.com1.z0.glb.clouddn.com/ebf6aa72-2971-11e6-b5fd-00163e002e64.png');
+            background-size: 20px 20px;
+            background-position: center center;
+            height: 20px;
+            width: 20px;
+            background-repeat: no-repeat;
+            padding: 0 30px;
+            box-sizing: border-box;
+        }
+
+        /* checked */
+        input.radio:checked ~ div:before {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('http://7tszlo.com1.z0.glb.clouddn.com/ebfbc5e8-2971-11e6-b5fd-00163e002e64.png');
+            background-size: 20px 20px;
+            background-position: center center;
+            height: 20px;
+            width: 20px;
+            background-repeat: no-repeat;
+            padding: 0 30px;
+            box-sizing: border-box;
+        }
+
+        /* disabled */
+        input.radio:disabled ~ div:before {
+            background-image: url('http://7tszlo.com1.z0.glb.clouddn.com/ebed7c40-2971-11e6-b5fd-00163e002e64.png');
+        }
+
+        input.radio:empty ~ div {
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            position: relative;
+            color: #979797;
+            padding: 10px 0;
+            border-bottom: 1px dotted #979797;
+            box-sizing: border-box;
+        }
+
+        input.radio:checked ~ div {
+            color: #000;
+            cursor: pointer;
+        }
+
+        input.radio:disabled ~ div {
+            color: #979797;
+        }
+
+        .radio-label {
+            z-index: 99;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            cursor: pointer;
+        }
+
+        .red-color {
+            color: #d94648;
+        }
+
+        .wrapper {
+            margin: 0 auto;
+            text-align: center;
+            padding: 60px 0 0 0;
+        }
+
+        .wrapper .input {
+            display: block;
+            -webkit-appearance: none;
+            border: 1px solid #979797;
+            margin: 10px auto;
+            height: 40px;
+            line-height: 40px;
+            width: 250px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .wrapper .btn {
+            border: 0;
+            margin: 10px auto;
+            height: 40px;
+            width: 250px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #d94648;
+            color: #fff;
+        }
+
+        .play {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            box-sizing: border-box;
+            justify-content: center;
+            background-color: #d94648;
+            color: #fff;
+            padding: 10px 0;
+            text-decoration: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 45px;
+            z-index: 100;
+        }
+
+        .calender {
+            width: 20px;
+            height: 20px;
+        }
+
+        .arrow {
+            width: 14px;
+            height: 8px;
+        }
+
+        .play .text {
+            font-size: 14px;
+            padding: 0 10px;
+        }
+
+        .play-wapper {
+            padding: 50px 0;
+        }
+
+        .tool {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            height: 45px;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .tool .info {
+            background-color: #333;
+            height: 100%;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        }
+
+        .tool .btn {
+            height: 100%;
+            background-color: #d94648;
+            -webkit-appearance: none;
+            border: 0;
+            color: #fff;
+            width: 100px;
+            font-size: 16px;
+        }
+
+        p {
+            margin: 0;
+            padding: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <template v-if="stage==0">
+        <div>loading...</div>
+    </template>
+    <template v-if="stage==1">
+        <div class="wrapper">
+            <input class="input" type="text" v-model="mobile" placeholder="输入你的手机号">
+            <input class="input" type="text" v-model="check_pass" placeholder="输入你的眼票码">
+            <button class="btn" @click="next">下一步</button>
+        </div>
+    </template>
+
+    <template v-if="stage==2">
+        <a class="play" href="javascript:void(0);" @click="show_plays()">
+            <img class="calender" src="http://7tszlo.com1.z0.glb.clouddn.com/527a18b6-2b01-11e6-b230-00163e002e64.png"/>
+            <span class="text">{{ selected_play.date }}</span>
+            <img class="arrow" src="http://7tszlo.com1.z0.glb.clouddn.com/a9bde5f8-2b01-11e6-b230-00163e002e64.png"/>
+        </a>
+
+        <div v-show="body_mask" class='body-mask'>
+            <div class='mask'>
+                <div class='mask-title'>可选日期</div>
+                <div class='mask-body'>
+                    <ul>
+                        <li @click="select_play($index, play)" v-for="play in plays">
+                            {{ play.date }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="play-wapper">
+            <div @click="select_appointment($index, appointment)" v-for="appointment in appointments">
+                <input type="radio"
+                       name="appointment"
+                       class="radio"
+                       id="radio{{appointment.id}}"
+                       v-model="selected_appointment_id"
+                       value="{{appointment.id}}"
+                       :disabled="appointment.max_count == appointment.used_count"
+                />
+                <div>
+                    <label for="radio{{appointment.id}}" class="radio-label"></label>
+                    <div>
+                        <p>{{appointment.time}}</p>
+                        <p>可预约总数: {{appointment.max_count}}</p>
+                        <p>已预约人数: <span class="red-color">{{appointment.used_count}}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool">
+            <div class="info">预约{{appointment_count}}人</div>
+            <button class="btn" @click="submit">提交预约</button>
+        </div>
+    </template>
+
+</div>
+
+<script type="application/javascript" src="static/js/vendor/zepto.js"></script>
+
+<script>
+    var plays = [{
+        id: 1,
+        date: '06-25 周六'
+    }, {
+        id: 2,
+        date: '06-26 周日'
+    }, {
+        id: 3,
+        date: '06-27 周一'
+    }, {
+        id: 4,
+        date: '06-28 周二'
+    }]
+    var appointments = [{
+        id: 1,
+        time: '10:00 - 12:00',
+        max_count: 200,
+        used_count: 5
+    }, {
+        id: 2,
+        time: '12:00 - 14:00',
+        max_count: 200,
+        used_count: 2
+    }, {
+        id: 3,
+        time: '16:00 - 18:00',
+        max_count: 200,
+        used_count: 200
+    }, {
+        id: 4,
+        time: '10:00 - 12:00',
+        max_count: 200,
+        used_count: 5
+    }, {
+        id: 5,
+        time: '12:00 - 14:00',
+        max_count: 200,
+        used_count: 2
+    }, {
+        id: 6,
+        time: '16:00 - 18:00',
+        max_count: 200,
+        used_count: 200
+    }]
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            stage: 0,
+            selected_play: {},
+            selected_appointment: {},
+            body_mask: false,
+            appointment_count: 0
+        },
+        computed: {
+            selected_appointment_id: function () {
+                return this.selected_appointment ? this.selected_appointment.id : "1"
+            }
+        },
+        methods: {
+            select_play: function (index, play) {
+                this.selected_play = play
+                this.body_mask = false
+            },
+            select_appointment: function (index, appointment) {
+                this.selected_appointment = appointment
+            },
+            show_plays: function () {
+                this.body_mask = true
+            },
+            next: function () {
+                setStage2()
+            },
+            submit: function () {
+                alert('提交')
+            }
+        }
+    })
+
+
+    var setStage2 = function () {
+        vm.stage = 0
+        setTimeout(function () {
+            vm.stage = 2
+            vm.plays = plays;
+            vm.selected_play = plays[1]
+            vm.appointments = appointments
+            vm.selected_appointment = appointments[2]
+            vm.appointment_count = 2
+        }, 200)
+    }
+
+    var getInitState = function () {
+        vm.stage = 1
+        vm.mobile = '232323222222'
+    }
+    getInitState()
+
+</script>
+
+</body>
+</html>
