@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>下载走起</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script type="text/javascript" src="./static/js/vendor/zepto.js"></script>
     <link rel="stylesheet" type="text/css" href="static/css/go-reason.css">
     <style type="text/css">
         html, body{
@@ -30,19 +31,80 @@
             padding-top: 10px;
             padding-bottom: 10px;
         }
+
+        @keyframes identifier {
+            0% { right: 0; }
+            50% { right: 5px; }
+            100% { right: 0; }
+        }
+
+        .float-btn1 {
+            animation: identifier 2s infinite;
+        }
+
+        .menu {
+            display: none;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-bottom: 1px solid #fff;
+            border-radius: 50%;
+            background-color: #d94648;
+            text-align: center;
+            color: #fff;
+            margin: 0 5px;
+            text-decoration: none;
+        }
+
+        .right-btn {
+            display: block;
+            width: 20px;
+            height: 50px;
+            line-height: 50px;
+            border-bottom: 1px solid #fff;
+            background-color: #d94648;
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        #menu-container {
+            position: fixed;
+            right: 0;
+            bottom: 60px;
+            opacity: 0.8;
+            line-height: 40px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
     </style>
+    <script>
+
+        var toggleMenus = function () {
+            $('#menu-container').toggleClass('float-btn')
+            $('.menu').toggle()
+        }
+    </script>
 
 </head>
 <body>
 
     <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
 
-    <div class="container">
-        <ul>
-            <li>
-                <a href="javascript:void(0)" onclick="alert"></a>
-            </li>
-        </ul>
+    <!--<div class="container">-->
+        <!--<ul>-->
+            <!--<li>-->
+                <!--<a href="javascript:void(0)" onclick="alert"></a>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+    <div id="menu-container">
+        <a href="/v/web.html?rev=from_proj12345/#!/order/list" class="menu">订单</a>
+        <a href="javascript:void(0);" onclick="toggleMenus()" class="right-btn">&lt;</a>
     </div>
 
 
