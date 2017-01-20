@@ -8,7 +8,9 @@ var del = require('del');
 var autoprefixer = require('gulp-autoprefixer');
 var sass = require('gulp-sass');
 var less = require('gulp-less');
-
+var cssnano = require('cssnano');
+// var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
 
 var paths = {
     scripts: ['static/js/**/*.js', '!static/js/vendor/*.js'],
@@ -100,7 +102,7 @@ gulp.task('less', [], function () {
                 'iOS 7',
                 'android 4'
             ],
-            cascade: true
+            // cascade: true
         }))
         .pipe(gulp.dest('rotate/rotate_files')); //将会在src/css下生成index.css以及detail.css
 });
@@ -113,6 +115,23 @@ gulp.task('less', [], function () {
 
 gulp.task('watch', function () {
     gulp.watch(paths.rotate_less, ['less']);
+});
+
+
+
+gulp.task('postcss', function () {
+    var processors = [
+        autoprefixer({browsers: [
+            'last 2 versions',
+            'safari 5',
+            'ios 6',
+            'android 4'
+        ]}),
+        // cssnano()
+    ];
+    return gulp.src('static/css/postcss.css')
+        .pipe(postcss(processors))
+        .pipe(gulp.dest('rotate'));
 });
 
 

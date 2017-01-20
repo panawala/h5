@@ -31,7 +31,9 @@
         };
 
         var beginFetchPrize = function () {
-            $("#lotCenter").addClass("lotCenter-animation-fast");
+            $("#lotCenter")
+                    .removeClass("lotCenter-animation" + prizeLength + "-" + prizeIndex)
+                    .addClass("lotCenter-animation-fast");
             $(".lotLight")
                     .removeClass("lotLight-animation-normal")
                     .addClass("lotLight-animation1");
