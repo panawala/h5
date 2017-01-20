@@ -97,7 +97,7 @@ gulp.task('less', [], function () {
             browsers: [
                 'last 2 versions',
                 'safari 5',
-                'ios 6',
+                'iOS 7',
                 'android 4'
             ],
             cascade: true

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>商家登录</title>
+    <title>Title</title>
+    <script src="static/js/vendor/zepto.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            word-wrap: break-word;
+        }
+        div,p {
+            outline: none;
+        }
+        img {
+            width: 100%;
+        }
+        .content {
+            padding: 20px;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div class="content" contenteditable="true">
+    <p onclick="edit(this)">zdfadfsadfasfasdfasdfasfsafasdfsdfsdfsdfs</p>
+    <p onclick="edit(this)">zdfadfsadfasfasdfasdfasfsafasdfsdfsdfsdfs</p>
+    <p onclick="edit(this)">zdfadfsadfasfasdfasdfasfsafasdfsdfsdfsdfs</p>
+    <img contenteditable="false" src="http://7tszlo.com1.z0.glb.clouddn.com/185c7f3c-4e26-11e6-9b2c-00163e002e64.jpg">
+    <div id="xx1" contenteditable="true">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</div>
+    <div id="xx2" contenteditable="true">bbbbbbbbbbbbbbbbb</div>
+    <div id="xx3" contenteditable="true">
+        <p>cccccccccccccccccccc</p>
+        <img onclick="setDisable(this)" src="http://7tszlo.com1.z0.glb.clouddn.com/1719e042-4e26-11e6-9b2c-00163e002e64.jpg">
+        <p>aaaaaaaaaaaaaaaaaaaa</p>
+    </div>
+    <img src="http://7tszlo.com1.z0.glb.clouddn.com/1719e042-4e26-11e6-9b2c-00163e002e64.jpg">
+</div>
+<script>
+
+    var setDisable = function (that) {
+        $('#xx3').attr('contenteditable', 'false')
+        alert('msg')
+        $('#xx3').attr('contenteditable', 'true')
+    };
+
+    $('.content').on('keydown', function (e) {
+        // 删除并且没有内容的时候，就禁止再删除了
+        var html = $('.content').html();
+        if (e.keyCode === 8 && /^<(\w+)[^<>]*><br><\/\1>$/.test(html)) {
+            e.preventDefault();
+        }
+        if (e.keyCode == 13){
+
+            var range = window.getSelection().getRangeAt(0);
+            console.log(range)
+            var start = range.startContainer
+            console.log('start')
+            console.log(start)
+            console.log(start.parentNode)
+//            e.preventDefault()
+        }
+    });
+
+    $('.content').on('keyup', function (e) {
+        if(e.keyCode == 144){
+            var selObj = window.getSelection();
+            var selRange = selObj.getRangeAt(0);
+            console.log(selRange)
+            var $currentEle = $(selRange.commonAncestorContainer);
+            if(!$currentEle.is('div')){
+               $currentEle = $currentEle.parent()
+            }
+            console.log($currentEle.html())
+
+            var $newDiv = $('<div contenteditable="true"><br/></div>')
+
+            $currentEle.after($newDiv)
+
+            var newDiv = $newDiv.get(0)
+            var newRange = document.createRange();
+            newRange.setStart(newDiv.childNodes[0], 0);
+            newRange.collapse(true);
+            selObj.removeAllRanges();
+            selObj.addRange(newRange);
+
+
+            e.preventDefault()
+        }
+    });
+
+
+    var edit = function(that){
+        var eleContentEditale = $(that).attr('contentEditable');
+        if(eleContentEditale != 'true'){
+            $(that).attr('contentEditable', 'true');
+            var selObj = window.getSelection();
+            var selRange = selObj.getRangeAt(0);
+            var newRange = document.createRange();
+            newRange.setStart(that.childNodes[0], selRange.startOffset);
+            newRange.collapse(selRange.collapse);
+            selObj.removeAllRanges();
+            selObj.addRange(newRange);
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+html, body {
+    height: 100%;
+    font: 19px "Helvetica Neue", "Helvetica", sans-serif;
+    color: #333;
+}
+
+section {
+    background: white;
+    position: fixed;
+    display:block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    z-index: 100;
+    transform: translate3d(0,0,0);
+    -moz-transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+}
+section.stick {
+    z-index: 10;
+}
+
+/* Decoration */
+section:nth-child(1){
+    background: url(http://ww2.sinaimg.cn/orj480/736f0c7ejw1f5c3uqs489j20bu06kt94.jpg);
+    /* Ali Bradshaw - http://www.fotopedia.com/wiki/New_York_City#!/items/alibradshaw-bs7HFo22Ff4 */
+    background-size: cover;
+}
+section:nth-child(2){
+    background: #f5f5f5;
+}
+section:nth-child(4){
+    background: #fff;
+}
+section:nth-child(3){
+    background: url(http://ww4.sinaimg.cn/orj480/736f0c7ejw1f7etm75o8qj20no0dcmy8.jpg);
+    /*  Fran Simó - http://www.fotopedia.com/wiki/New_York_City#!/items/fransimo-onrEHtg2404 */
+    background-size: cover;
+    color: #fff;
+    text-shadow: 0 0 3px #000;
+    text-align: right;
+}
+article {
+    width: 600px;
+    margin: 60px auto;
+}
+section:nth-child(3) article {
+    float: right;
+    margin: 60px;
+}
+h1, h2, h3 {
+    font-family: "HelveticaNeue-CondensedBold", "Helvetica Neue", "Helvetica", sans-serif;
+    font-weight: bold;
+    font-stretch: condensed;
+}
+
+h1 {
+    text-align: center;
+    font-size: 60px;
+    color: #fff;
+}
+h1:before {
+    content: "⬇"; /* ↓ ⇓ */
+}
